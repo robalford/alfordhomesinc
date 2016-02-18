@@ -29,3 +29,11 @@ add_theme_support( 'custom-background' );
 
 //* Add support for 3-column footer widgets
 add_theme_support( 'genesis-footer-widgets', 3 );
+
+/* Code to Display Featured Image on top of the post */
+// http://writenowdesign.com/blog/wordpress/wordpress-how-to/add-a-featured-image-to-a-genesis-post-or-page/
+add_action( 'genesis_entry_content', 'featured_post_image', 8 );
+function featured_post_image() {
+  if ( !is_singular( array( 'post', 'page' ) ))  return;
+    the_post_thumbnail('large'); //you can use medium, large or a custom size
+}
