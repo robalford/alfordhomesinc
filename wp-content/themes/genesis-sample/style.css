@@ -175,7 +175,7 @@ textarea:focus,
 
 a {
 	color: #c3251d;
-	text-decoration: underline;
+	text-decoration: none; /*custom*/
 }
 
 a:hover,
@@ -1074,7 +1074,7 @@ img.alignright,
 .genesis-nav-menu .sub-menu .current-menu-item > a:hover,
 .genesis-nav-menu .sub-menu .current-menu-item > a:focus  {
 	color: #c3251d;
-	text-decoration: underline;
+	text-decoration: none; /*custom*/
 }
 
 .genesis-nav-menu .sub-menu {
