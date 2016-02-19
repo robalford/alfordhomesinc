@@ -32,20 +32,37 @@ add_theme_support( 'genesis-footer-widgets', 3 );
 
 /* CUSTOM FUNCTIONS FOR ALFORD HOMES WEBSITE BELOW */
 
+// Add custom image size for full width front page
+add_image_size('front-page', 2590, 1200, true);
+
 /* Code to Display Featured Image on top of the post */
-// http://writenowdesign.com/blog/wordpress/wordpress-how-to/add-a-featured-image-to-a-genesis-post-or-page/
-// if it's not singular, returns without doing anything. if it is then it calls the post thumbnail funtion.
 add_action( 'genesis_before_entry_content', 'featured_post_image', 8 ); //make sure before entry content is the right place for this
 function featured_post_image() {
-  if ( is_singular() )
-    the_post_thumbnail('large'); //you can use medium, large or a custom size
+    if ( !is_front_page() && is_singular() ) {
+        the_post_thumbnail('large'); //you can use medium, large or a custom size
+    }
 }
+
 // remove the title from the top of the post
 remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
-// move it to display before content, except for front page
+// move it to display before content, remove for front page
 add_action( 'genesis_entry_content', 'ahi_do_post_title_if_not_front_page', 7 ); // make sure entry content is the right place for this
 function ahi_do_post_title_if_not_front_page() {
     if ( !is_front_page() ) {
         genesis_do_post_title();
     }
 }
+// add fullscreen photo to landing page
+add_action( 'genesis_after_header', 'full_featured_image' );
+function full_featured_image() {
+    if ( is_front_page() ) {
+        echo '<div id="full-image">';
+        echo the_post_thumbnail('front-page');
+        echo '</div>';
+    }
+}
+
+if (is_front_page()) {
+    remove_action('genesis_loop', 'genesis_do_loop');
+}
+
