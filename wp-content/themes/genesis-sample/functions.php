@@ -32,8 +32,14 @@ add_theme_support( 'genesis-footer-widgets', 3 );
 
 /* Code to Display Featured Image on top of the post */
 // http://writenowdesign.com/blog/wordpress/wordpress-how-to/add-a-featured-image-to-a-genesis-post-or-page/
-add_action( 'genesis_entry_content', 'featured_post_image', 8 );
+// if it's not singular, returns without doing anything. if it is then it calls the post thumbnail funtion.
+add_action( 'genesis_before_entry_content', 'featured_post_image', 8 );
 function featured_post_image() {
   if ( !is_singular( array( 'post', 'page' ) ))  return;
     the_post_thumbnail('large'); //you can use medium, large or a custom size
 }
+// remove the title from the top of the post
+remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
+// move it to display before content
+add_action( 'genesis_entry_content', 'genesis_do_post_title', 7 );
+
