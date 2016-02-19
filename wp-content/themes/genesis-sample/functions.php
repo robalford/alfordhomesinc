@@ -37,7 +37,7 @@ add_theme_support( 'genesis-footer-widgets', 3 );
 // if it's not singular, returns without doing anything. if it is then it calls the post thumbnail funtion.
 add_action( 'genesis_before_entry_content', 'featured_post_image', 8 ); //make sure before entry content is the right place for this
 function featured_post_image() {
-  if ( !is_singular( array( 'post', 'page' ) ))  return;
+  if ( is_singular() )
     the_post_thumbnail('large'); //you can use medium, large or a custom size
 }
 // remove the title from the top of the post
