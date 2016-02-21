@@ -295,6 +295,8 @@ video,
 
 img {
 	height: auto;
+	display: block; /*custom*/
+	margin: 0 auto 2px auto; /*custom*/
 }
 
 .featured-content img,
