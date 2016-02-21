@@ -43,10 +43,12 @@ function featured_post_image() {
     }
 }
 
-// remove the title from the top of the post
+// remove the title from the top of the post on front page
+if ( is_front_page() ) {
 remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
 // move it to display before content, remove for front page (commented out for now)
 add_action( 'genesis_entry_content', 'genesis_do_post_title', 7 ); // make sure entry content is the right place for this
+}
 // function ahi_do_post_title_if_not_front_page() {
 //     if ( !is_front_page() ) {
 //         genesis_do_post_title();
