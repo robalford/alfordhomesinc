@@ -1010,7 +1010,7 @@ img.alignright,
 .site-title a,
 .site-title a:hover,
 .site-title a:focus {
-	color: #aaa; /*custom*/
+	color: white; /*custom*/
 }
 
 .header-image .site-title > a {
@@ -1065,7 +1065,7 @@ img.alignright,
 }
 
 .genesis-nav-menu a {
-	color: #aaa; /*custom*/
+	color: white; /*custom*/
 	text-decoration: none;
 	display: block;
 	padding: 30px 24px;
