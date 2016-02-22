@@ -64,4 +64,10 @@ function full_featured_image() {
     }
 }
 
+// Custom footer credit
+add_filter( 'genesis_footer_creds_text', 'my_footer_creds');
+function my_footer_creds() {
+    $creds = 'contact@alfordhomesinc.com | 360.779.7620 | [footer_copyright] Alford Homes Inc.';
+    return $creds;
+}
 
