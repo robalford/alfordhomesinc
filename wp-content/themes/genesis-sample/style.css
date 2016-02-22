@@ -908,6 +908,13 @@ img.alignright,
 /* # Plugins
 ---------------------------------------------------------------------------------------------------- */
 
+/*custom styles for featured image caption plugin*/
+
+.ccfic {
+	float: right; /*custom*/
+	font-size: 10px;
+}
+
 /* ## Genesis eNews Extended
 --------------------------------------------- */
 
@@ -1217,6 +1224,9 @@ img.alignright,
 
 /* # Content Area
 ---------------------------------------------------------------------------------------------------- */
+.entry-content {
+	padding-top: 3rem; /*custom*/
+}
 
 /* ## Entries
 --------------------------------------------- */
