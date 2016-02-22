@@ -1071,6 +1071,10 @@ img.alignright,
 	padding: 30px 24px;
 }
 
+.genesis-nav-menu .sub-menu a {
+	color: black; /*custom*/
+}
+
 .genesis-nav-menu a:hover,
 .genesis-nav-menu a:focus,
 .genesis-nav-menu .current-menu-item > a,
