@@ -30,31 +30,12 @@ add_theme_support( 'custom-background' );
 //* Add support for 3-column footer widgets
 add_theme_support( 'genesis-footer-widgets', 3 );
 
-/* CUSTOM FUNCTIONS FOR ALFORD HOMES WEBSITE BELOW */
+//* CUSTOM FUNCTIONS FOR ALFORD HOMES WEBSITE BELOW
 
-// Add custom image size for full width front page
+//* Add custom image size for full width front page
 add_image_size('front-page', 2590, 1200, true);
 
-/* Code to Display Featured Image on top of the post */
-add_action( 'genesis_before_entry_content', 'featured_post_image', 8 ); //make sure before entry content is the right place for this
-function featured_post_image() {
-    if ( !is_front_page() && is_singular() ) {
-        the_post_thumbnail('large'); //you can use medium, large or a custom size
-    }
-}
-
-// remove the title from the top of the post on front page
-if ( is_front_page() ) {
-remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
-// move it to display before content, remove for front page (commented out for now)
-add_action( 'genesis_entry_content', 'genesis_do_post_title', 7 ); // make sure entry content is the right place for this
-}
-// function ahi_do_post_title_if_not_front_page() {
-//     if ( !is_front_page() ) {
-//         genesis_do_post_title();
-//     }
-// }
-// add fullscreen photo to landing page
+//* Add fullscreen photo to landing page
 add_action( 'genesis_after_header', 'full_featured_image' );
 function full_featured_image() {
     if ( is_front_page() ) {
@@ -64,13 +45,27 @@ function full_featured_image() {
     }
 }
 
-// Custom footer credit
+//* Remove the title from the top of the post on front page
+if ( is_front_page() ) {
+remove_action( 'genesis_entry_header', 'genesis_do_post_title' );
+add_action( 'genesis_entry_content', 'genesis_do_post_title', 7 );
+}
+
+//* Display Featured Image on top of the post
+add_action( 'genesis_before_entry_content', 'featured_post_image', 8 );
+function featured_post_image() {
+    if ( !is_front_page() && is_singular() ) {
+        the_post_thumbnail('large'); //you can use medium, large or a custom size
+    }
+}
+
+//* Add custom footer credit
 add_filter( 'genesis_footer_creds_text', 'my_footer_creds');
 function my_footer_creds() {
-    $creds = 'contact@alfordhomesinc.com | 360.779.7620 | [footer_copyright] Alford Homes Inc.';
+    $creds = 'contact@alfordhomesinc.com | 360.779.7268 | [footer_copyright] Alford Homes Inc.';
     return $creds;
 }
 
-/** Remove Edit Link */
+//* Remove Edit Link (that displays while logged into admin)
 add_filter( 'edit_post_link', '__return_false' );
 
