@@ -92,12 +92,6 @@ wp-content/*
 
 # ignore these plugins
 wp-content/plugins/hello.php
-wp-content/plugins/genesis-simple-sidebars/
-wp-content/plugins/genesis-visual-hook-guide/
-wp-content/plugins/photo-gallery/
-wp-content/plugins/wp-gallery-custom-links/
-wp-content/plugins/dynamic-widgets/
-wp-content/plugins/featured-image-caption/
 
 # ignore specific themes
 wp-content/themes/twenty*/
