@@ -988,7 +988,7 @@ img.alignright,
 ---------------------------------------------------------------------------------------------------- */
 
 .site-header {
-	background-color: #444; /*custom*/
+	background-color: white; /*custom*/
 	min-height: 160px;
 }
 
@@ -1019,7 +1019,7 @@ img.alignright,
 .site-title a,
 .site-title a:hover,
 .site-title a:focus {
-	color: white; /*custom*/
+	color: black; /*custom*/
 }
 
 .header-image .site-title > a {
@@ -1074,7 +1074,7 @@ img.alignright,
 }
 
 .genesis-nav-menu a {
-	color: white; /*custom*/
+	color: black; /*custom*/
 	text-decoration: none;
 	display: block;
 	padding: 30px 24px;
