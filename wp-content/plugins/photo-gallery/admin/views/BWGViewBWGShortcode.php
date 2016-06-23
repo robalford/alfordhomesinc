@@ -76,7 +76,10 @@ class BWGViewBWGShortcode {
     wp_print_scripts('jquery-ui-widget');
     wp_print_scripts('jquery-ui-position');
     wp_print_scripts('jquery-ui-tooltip');
-    ?>
+    wp_print_scripts('wp-pointer');
+    wp_print_styles('wp-pointer');
+    wp_print_styles('dashicons');
+    ?> 
         <link rel="stylesheet" href="<?php echo WD_BWG_URL . '/css/bwg_shortcode.css?ver='.wd_bwg_version(); ?>">
         <link rel="stylesheet" href="<?php echo WD_BWG_URL . '/css/jquery-ui-1.10.3.custom.css'; ?>">
         <script language="javascript" type="text/javascript" src="<?php echo WD_BWG_URL . '/js/bwg_shortcode.js?ver='.wd_bwg_version(); ?>"></script>
@@ -114,7 +117,7 @@ class BWGViewBWGShortcode {
               <div style="text-align:center; height:100px;">
                 <span class="gallery_type" onClick="bwg_gallery_type('thumbnails')">
                   <div style="text-align: center;"><input type="radio" id="thumbnails" name="gallery_type" value="thumbnails"/><label for="thumbnails"><?php _e("Thumbnails", 'bwg_back'); ?></label></div>
-                  <label for="thumbnails"><img src="<?php echo WD_BWG_URL . '/images/thumbnails.jpg'; ?>" /></label>
+                  <label for="thumbnails"><img id="display_thumb" src="<?php echo WD_BWG_URL . '/images/thumbnails.jpg'; ?>" /></label>
                 </span>
                 <span title="<?php _e("This view is disabled in free version.", 'bwg_back'); ?>" class="gallery_type">
                   <div style="text-align: center;"><input disabled="disabled" type="radio" id="thumbnails_masonry" name="gallery_type" value="thumbnails_masonry" /><label class="spider_free_version_label" for="thumbnails_masonry"><?php _e("Masonry", 'bwg_back'); ?></label></div>
@@ -606,6 +609,10 @@ class BWGViewBWGShortcode {
                       </select>
                     </td>
                   </tr>
+                  <tr id="tr_slideshow_effect_duration">
+                    <td title="<?php echo __("Interval between two images.", 'bwg_back'); ?>" class="spider_label"><label for="slideshow_effect_duration"><?php echo __('Effect duration:', 'bwg_back'); ?> </label></td>
+                    <td><input type="text" name="slideshow_effect_duration" id="slideshow_effect_duration" value="<?php echo $option_row->slideshow_effect_duration; ?>" class="spider_int_input" /> sec.</td>
+                  </tr>
                   <tr id="tr_slideshow_interval">
                     <td title="<?php _e("Interval between two images.", 'bwg_back'); ?>" class="spider_label"><label for="slideshow_interval"><?php _e("Time interval:", 'bwg_back'); ?> </label></td>
                     <td><input type="text" name="slideshow_interval" id="slideshow_interval" value="<?php echo $option_row->slideshow_interval; ?>" class="spider_int_input" /> sec.</td>
@@ -792,6 +799,10 @@ class BWGViewBWGShortcode {
                         ?>
                       </select>
                     </td>
+                  </tr>
+                  <tr id="tr_popup_effect_duration">
+                    <td title="<?php echo __("Interval between two images.", 'bwg_back'); ?>" class="spider_label"><label for="popup_effect_duration"><?php echo __('Effect duration:', 'bwg_back'); ?> </label></td>
+                    <td><input type="text" name="popup_effect_duration" id="popup_effect_duration" value="<?php echo $option_row->popup_effect_duration; ?>" class="spider_int_input" /> sec.</td>
                   </tr>
                   <tr id="tr_popup_autoplay">
                     <td class="spider_label">
@@ -1176,6 +1187,7 @@ class BWGViewBWGShortcode {
                   }
                   jQuery("select[id=slideshow_effect] option[value='" + short_code['slideshow_effect'] + "']").attr('selected', 'selected');
                   jQuery("#slideshow_interval").val(short_code['slideshow_interval']);
+                  jQuery("#slideshow_effect_duration").val(short_code['slideshow_effect_duration']);
                   jQuery("#slideshow_width").val(short_code['slideshow_width']);
                   jQuery("#slideshow_height").val(short_code['slideshow_height']);
                   if (short_code['enable_slideshow_autoplay'] == 1) {
@@ -1441,6 +1453,7 @@ class BWGViewBWGShortcode {
                 jQuery("#popup_height").val(short_code['popup_height']);
                 jQuery("select[id=popup_effect] option[value='" + short_code['popup_effect'] + "']").attr('selected', 'selected');
                 jQuery("#popup_interval").val(short_code['popup_interval']);
+                jQuery("#popup_effect_duration").val(short_code['popup_effect_duration']);
                 if (short_code['popup_fullscreen'] == 1) {
                   jQuery("#popup_fullscreen_1").attr('checked', 'checked'); 
                   jQuery("#tr_popup_width_height").css('display', 'none');
@@ -1634,6 +1647,7 @@ class BWGViewBWGShortcode {
             return short_code_attr;
           }
           function bwg_insert_shortcode(content) {
+            window.parent.window.jQuery(window.parent.document).trigger("onOpenShortcode");
             var gallery_type = jQuery("input[name=gallery_type]:checked").val();
             var theme = jQuery("#theme").val();
             var title = "";
@@ -1680,6 +1694,7 @@ class BWGViewBWGShortcode {
                 tagtext += ' enable_slideshow_music="' + jQuery("input[name=enable_slideshow_music]:checked").val() + '"';
                 tagtext += ' slideshow_music_url="' + jQuery("#slideshow_music_url").val() + '"';
 								title = ' gal_title="' + jQuery.trim(jQuery('#gallery option:selected').text().replace("'", "").replace('"', '')) + '"';
+                tagtext += ' slideshow_effect_duration="' + jQuery("#slideshow_effect_duration").val() + '"';
                 break;
 
               }
@@ -1781,6 +1796,7 @@ class BWGViewBWGShortcode {
               tagtext += ' popup_enable_pinterest="' + jQuery("input[name=popup_enable_pinterest]:checked").val() + '"';
               tagtext += ' popup_enable_tumblr="' + jQuery("input[name=popup_enable_tumblr]:checked").val() + '"';
               tagtext += ' show_tag_box="' + jQuery("input[name=show_tag_box]:checked").val() + '"';
+              tagtext += ' popup_effect_duration="' + jQuery("#popup_effect_duration").val() + '"';
             }
             // Watermark parameters.
             tagtext += ' watermark_type="' + jQuery("input[name=watermark_type]:checked").val() + '"';
@@ -1837,6 +1853,8 @@ class BWGViewBWGShortcode {
       </body>
     </html>
     <?php
+    include_once (WD_BWG_DIR .'/includes/bwg_pointers.php');
+    new BWG_pointers();
     die();
   }
 

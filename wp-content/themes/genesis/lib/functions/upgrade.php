@@ -134,6 +134,24 @@ function genesis_update_check() {
 }
 
 /**
+ * Upgrade the database to version 2300.
+ *
+ * @since 2.3.0
+ *
+ * @uses genesis_update_settings()  Merges new settings with old settings and pushes them into the database.
+ * @uses genesis_get_option()       Get theme setting value.
+ */
+function genesis_upgrade_2301() {
+
+	//* Update Settings
+	genesis_update_settings( array(
+		'theme_version'        => '2.3.0',
+		'db_version'           => '2301',
+	) );
+
+}
+
+/**
  * Upgrade the database to version 2209.
  *
  * @since 2.2.6
@@ -147,7 +165,7 @@ function genesis_upgrade_2209() {
 
 	foreach ( (array) $term_meta as $term_id => $meta ) {
 		foreach ( (array) $meta as $key => $value ) {
-			add_term_meta( $term_id, $key, $value );
+			add_term_meta( $term_id, $key, $value, true );
 		}
 	}
 
@@ -379,6 +397,14 @@ function genesis_upgrade() {
 	if ( genesis_get_option( 'db_version', null, false ) >= PARENT_DB_VERSION )
 		return;
 
+	global $wp_db_version;
+
+	//* If the WP db hasn't been upgraded, make them upgrade first.
+	if ( get_option('db_version') != $wp_db_version ) {
+		wp_redirect( admin_url( 'upgrade.php?_wp_http_referer=' . urlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) );
+ 		exit;
+	}
+
 	#########################
 	# UPDATE TO VERSION 1.0.1
 	#########################
@@ -565,6 +591,13 @@ function genesis_upgrade() {
 	if ( genesis_get_option( 'db_version', null, false ) < '2209' )
 		genesis_upgrade_2209();
 
+	###########################
+	# UPDATE DB TO VERSION 2301
+	###########################
+
+	if ( genesis_get_option( 'db_version', null, false ) < '2301' )
+		genesis_upgrade_2301();
+
 	do_action( 'genesis_upgrade' );
 
 }
@@ -620,11 +653,11 @@ add_action( 'genesis_upgrade', 'genesis_upgrade_redirect' );
  */
 function genesis_upgrade_redirect() {
 
-	if ( ! is_admin() || ! current_user_can( 'edit_theme_options' ) )
+	if ( ! is_admin() || ! current_user_can( 'edit_theme_options' ) || is_customize_preview() )
 		return;
 
-	genesis_admin_redirect( 'genesis', array( 'upgraded' => 'true' ) );
-	#genesis_admin_redirect( 'genesis-upgraded' );
+	#genesis_admin_redirect( 'genesis', array( 'upgraded' => 'true' ) );
+	genesis_admin_redirect( 'genesis-upgraded' );
 	exit;
 
 }

@@ -220,7 +220,8 @@ class BWGControllerThemes_bwg {
     $lightbox_overlay_bg_transparent = (isset($_POST['lightbox_overlay_bg_transparent']) ? (int) esc_html(stripslashes( $_POST['lightbox_overlay_bg_transparent'])) : 80);
     $lightbox_bg_color = (isset($_POST['lightbox_bg_color']) ? esc_html(stripslashes( $_POST['lightbox_bg_color'])) : '000000');
     $lightbox_overlay_bg_color = (isset($_POST['lightbox_overlay_bg_color']) ? esc_html(stripslashes( $_POST['lightbox_overlay_bg_color'])) : '000000');			
-    $lightbox_rl_btn_style = (isset($_POST['lightbox_rl_btn_style']) ? esc_html(stripslashes( $_POST['lightbox_rl_btn_style'])) : 'fa-chevron');			
+    $lightbox_rl_btn_style = (isset($_POST['lightbox_rl_btn_style']) ? esc_html(stripslashes( $_POST['lightbox_rl_btn_style'])) : 'fa-chevron');
+    $lightbox_bg_transparent = (isset($_POST['lightbox_bg_transparent']) ? (int) esc_html(stripslashes( $_POST['lightbox_bg_transparent'])) : 100);
 	
     $blog_style_margin = (isset($_POST['blog_style_margin']) ? esc_html(stripslashes( $_POST['blog_style_margin'])) : '');
     $blog_style_padding = (isset($_POST['blog_style_padding']) ?  esc_html(stripslashes( $_POST['blog_style_padding'])) : '');
@@ -547,6 +548,9 @@ class BWGControllerThemes_bwg {
     $mosaic_thumb_transition = (isset($_POST['mosaic_thumb_transition']) ?  esc_html(stripslashes( $_POST['mosaic_thumb_transition'])) : 1);
 
     $default_theme = (isset($_POST['default_theme']) ? esc_html(stripslashes( $_POST['default_theme'])) : 0);
+
+    $save_as_copy = (isset($_POST['save_as_copy']) ?  esc_html(stripslashes( $_POST['save_as_copy'])) : 0);
+
     $themes = array(
       'thumb_margin' => $thumb_margin,
       'thumb_padding' => $thumb_padding,
@@ -668,6 +672,7 @@ class BWGControllerThemes_bwg {
       'lightbox_bg_color' => $lightbox_bg_color,
       'lightbox_overlay_bg_color' => $lightbox_overlay_bg_color,
       'lightbox_rl_btn_style' => $lightbox_rl_btn_style,
+      'lightbox_bg_transparent' => $lightbox_bg_transparent,
 
       'blog_style_margin' => $blog_style_margin,
       'blog_style_padding' => $blog_style_padding,
@@ -992,23 +997,22 @@ class BWGControllerThemes_bwg {
       'carousel_caption_p_color' => $carousel_caption_p_color,
       'carousel_title_opacity' => $carousel_title_opacity, 
       'carousel_title_border_radius' => $carousel_title_border_radius,
-      'default_theme' => $default_theme,
       'mosaic_thumb_transition' => $mosaic_thumb_transition,
     );
     $themes = json_encode($themes);
-    if ($id != 0) {
-      $save = $wpdb->update($wpdb->prefix . 'bwg_theme', array(
-        'name' => $name,
-        'options' => $themes,
-        'default_theme' => $default_theme,
-      ), array('id' => $id));
-    }
-    else {
+
+    if ($id == 0 || $save_as_copy == 1) {
       $save = $wpdb->insert($wpdb->prefix . 'bwg_theme', array(
         'name' => $name,
         'options' => $themes,
-        'default_theme' => $default_theme,
-        ));
+        'default_theme' => 0,
+      ));
+    }
+    else {
+      $save = $wpdb->update($wpdb->prefix . 'bwg_theme', array(
+        'name' => $name,
+        'options' => $themes,
+      ), array('id' => $id));
     }
     if ($save !== FALSE) {
       return 1;
@@ -1085,7 +1089,6 @@ class BWGControllerThemes_bwg {
     $query_url = add_query_arg(array('page' => $page, 'task' => 'display', 'message' => $message), $query_url);
     WDWLibrary::spider_redirect($query_url);
   }
-
   ////////////////////////////////////////////////////////////////////////////////////////
   // Getters & Setters                                                                  //
   ////////////////////////////////////////////////////////////////////////////////////////

@@ -37,12 +37,6 @@ function spider_featured($current_plugin = '') {
       'content'  => 'WordPress Contact Form Maker is an advanced and easy-to-use tool for creating forms.',
       'href'     => 'https://web-dorado.com/products/wordpress-contact-form-maker-plugin.html'
     ),
-    "fm-import" => array(
-      'title'    => 'FM Export/Import',
-      'text'     => 'WordPress Form Maker export/import plugin',
-      'content'  => 'Form Maker Export/Import is a Form Maker capacity enhancing plugin.',
-      'href'     => 'https://web-dorado.com/products/wordpress-form/export-import.html'
-    ),
     "spider-calendar" => array(
       'title'    => 'Spider Calendar',
       'text'     => 'WordPress event calendar plugin',
@@ -101,7 +95,7 @@ function spider_featured($current_plugin = '') {
       'title'    => 'Folder Menu',
       'text'     => 'WordPress folder menu plugin',
       'content'  => 'Folder Menu Vertical is a WordPress Flash menu module for your website, designed to meet your needs and preferences.',
-      'href'     => 'https://web-dorado.com/products/wordpress-random-post.html'
+      'href'     => 'https://web-dorado.com/products/wordpress-menu-vertical.html'
     ),
     "random_post" => array(
       'title'    => 'Random post',
@@ -121,10 +115,31 @@ function spider_featured($current_plugin = '') {
       'content'  => 'WD Instagram Feed is a user-friendly tool for displaying user or hashtag-based feeds on your website.',
       'href'     => 'https://web-dorado.com/products/wordpress-instagram-feed-wd.html'
     ),
+    "post-slider" => array(
+      'title'    => 'Post Slider',
+      'text'     => 'WordPress Post Slider plugin',
+      'content'  => 'Post Slider WD is designed to show off the selected posts of your website in a slider.',
+      'href'     => 'https://web-dorado.com/products/wordpress-post-slider-plugin.html'
+    ),
+    "google-maps" => array(
+      'title'    => 'Google Map',
+      'text'     => 'WordPress Google Maps Plugin',
+      'content'  => 'Google Maps WD is an intuitive tool for creating Google maps with advanced markers, custom layers and overlays for your website.',
+      'href'     => 'https://web-dorado.com/products/wordpress-google-maps-plugin.html'
+    ),
   );
   ?>
   <div id="main_featured_plugins_page">
     <h3>Featured Plugins</h3>
+    <div class="featured_header">
+      <a target="_blank" href="https://web-dorado.com/wordpress-plugins.html?source=<?php echo $current_plugin; ?>">
+        <h1>GET <?php echo $plugins[$current_plugin]["title"]; ?> +18 PLUGINS</h1>
+        <h1 class="get_plugins">FOR $100 ONLY <span>- SAVE 70%</span></h1>
+        <div class="try-now">
+          <span>TRY NOW</span>
+        </div>
+      </a>
+	 </div>
     <ul id="featured-plugins-list">
       <?php
       foreach ($plugins as $key => $plugins) {
@@ -138,7 +153,7 @@ function spider_featured($current_plugin = '') {
 				<div class="description">
 					<p><?php echo $plugins['content']; ?></p>
 				</div>
-				<a target="_blank" href="<?php echo $plugins['href']; ?>" class="download">Download</a>
+				<a target="_blank" href="<?php echo $plugins['href']; ?>?source=<?php echo $current_plugin; ?>" class="download">Download Plugin &#9658;</a>
 			</li>
           <?php
         }

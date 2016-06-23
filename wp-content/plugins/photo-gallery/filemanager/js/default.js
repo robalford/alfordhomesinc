@@ -29,7 +29,18 @@ var isUploading;
 // Public Methods                                                                     //
 ////////////////////////////////////////////////////////////////////////////////////////
 jQuery(document).ready(function () {
-  var all_images_count = jQuery(".item_thumb img").length;
+  if (jQuery("#importer").css("display") != 'none') {
+    var all_images_count = jQuery("#importer .item_thumb img").length;
+  }
+  else {
+    var all_images_count = jQuery("#file_manager .item_thumb img").length;
+  }
+  if(!all_images_count) {
+    setTimeout(function(){jQuery(document).trigger("onUpload")});
+  }
+  else {
+    setTimeout(function(){jQuery(document).trigger("onSelectAllImage")});
+  }
   if (all_images_count == 0 || all_images_count <= 24) {
     jQuery("#opacity_div").hide();
     jQuery("#loading_div").hide();
@@ -297,6 +308,7 @@ function onBtnRemoveItemsClick(event, obj) {
 }
 
 function onBtnShowUploaderClick(event, obj) {
+  jQuery(document).trigger("onUploadFilesPressed");
   jQuery("#uploader").fadeIn();
 }
 
@@ -317,7 +329,14 @@ function onBtnBackClick(event, obj) {
 }
 
 
-function onPathComponentClick(event, obj, path) {
+function onPathComponentClick(event, obj, key) {
+  if (typeof key != "undefined" && key == 0) {
+    path = "";
+  }
+  else {
+    path = jQuery(obj).html();
+    path = path.trim();
+  }
   submit("", null, null, null, path, null, null, null, null, null, null);
 }
 

@@ -2,8 +2,9 @@
 Contributors: webdorado
 Donate link: https://web-dorado.com/products/wordpress-photo-gallery-plugin.html
 Tags: photo, photo gallery, image gallery, video gallery, gallery, galleries,  wordpress gallery plugin, images gallery, album, photo albums, simple gallery, best gallery plugin, free photo gallery, wp gallery, wordpress gallery, website gallery, gallery shortcode, best gallery, picture, pictures, gallery slider, photo album, photogallery, widget gallery, image, images, photos,  gallery lightbox, photoset, wordpress photo gallery plugin, wp gallery plugins, responsive wordpress photo gallery, media, image album, filterable gallery, banner rotator, fullscreen gallery, responsive gallery, add album,  add gallery, add pictures, fotoalbum, foto, gallery decription, multiple pictures, photoalbum, upload images, upload photos, view images, view pictures, admin, AJAX, comments, gallery image, image lightbox, image rotate, image slideshow, image slider, jquery, jquery gallery, slide show, slideshow, thumbnail, thumbnail view, thumbnails, thumbs, responsive, watermarking, watermarks,fullscreen slider, lightbox, photography, sidebar, slide, youtube, vimeo, videos, instagram, facebook, mosaic, facebook integration, instagram feed, Flickr, Dailymotion, widget, youtube gallery, ecommerce
-Tested up to: 4.4 
-Stable tag: 1.2.88    
+Requires at least: 3.4
+Tested up to: 4.5 
+Stable tag: 1.2.108    
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -216,8 +217,98 @@ Yes, the Photo Gallery is responsive and displays resized image for the mobile d
 = 7. Is it possible to add advertising or watermark over the images with free version? =
 Yes, it is possible to add advertising and/or watermark over the images. In both cases it can be only a single ad/watermark for all images. 
 
+= 8. What are the best dimensions to set for Photo Gallery Images? =
+We recommend to use images with the width of 1200px to 1600px. In order to speed up the load time of one's site, please use images with size of 500-700 KB or less.    
+
+= 9. Can I add images to my galleries which had already been uploaded to WordPress Media Library? =
+To enable the feature of adding Media Library images, go to Photo Gallery > Options > Global Options and set Import from Media Library option to Yes. After that you will be able to import photos from Media Library to Photo Gallery.     
 
 == Changelog ==
+
+= 1.2.108 =
+* Added: Save as copy themes.    
+* Fixed: Delete folder with single quote in name.    
+* Fixed: Add facebook album with images more than 100.    
+
+= 1.2.107 =
+* Fixed: Responsiveness   
+* Fixed: Bug on full-size and fullscreen lightbox     
+
+= 1.2.106 =
+IMPORTANT: Instagram changed the API. You need to get a new access token by using "Sign in with Instagram" button on the Options page in order to keep your Instagram Gallery functioning after June 1.
+* Changed: Instagram new API.
+* Changed: Increase get_options count.
+
+= 1.2.105 =
+* Changed: Deleted themes old fields.    
+* Changed: Check if file exist on set watermark.    
+* Fixed: Remove box shadow from navigation buttons.     
+* Fixed: Deactivate after uninstall, when folder name is different from photo-gallery.    
+
+= 1.2.104 =
+* Fixed: Search in gallery from widget.     
+* Added: Effect duration option.    
+
+= 1.2.103 =
+* Fixed: Text watermark responsivness.   
+* Added: Set/Reset watermark to all images at once.   
+* Fixed: Description for masonry album views.   
+
+= 1.2.102 =
+* Fixed: Search also in description.   
+* Added: Options for slideshow widget.   
+* Fixed: Import from media libruary.   
+* Fixed: File manager loading.    
+
+= 1.2.101 =
+* Fixed: Security issue   
+
+= 1.2.100 =
+* Fixed: Add facebook single video.    
+* Fixed: Styles on Wordpress 4.5.     
+* Added: Right click protection for thumbnails.     
+
+= 1.2.99 =
+* Fixed: Open lightbox from blog style, image browser and albums views.    
+* Fixed: Vertical filmstrip with control buttons.    
+* Added: Recreate all thumbnails at once.    
+
+= 1.2.98 =
+* Added: Backend translation on Icelandic (thanks to Eggert Johannesson).    
+* Fixed: Backend translation on Dutch.     
+
+= 1.2.96 =
+* Fixed: Filemanager view type on large screens.     
+* Added: Delete confirmation for galleries and images.      
+* Changed: Featured plugins, themes page.     
+   
+= 1.2.95 =
+* Fixed: Advertisement link in slideshow.    
+* Fixed: Comment, rating, ecommerce conflict.     
+
+= 1.2.94 =
+* Fixed: Gallery media uploader files with withespaces in name.     
+
+= 1.2.93 =
+* Added: Introduction tour.   
+
+= 1.2.92 =
+* Fixed: Autoplay in lightbox.   
+
+= 1.2.91 =
+* Fixed: Sort randomly in album views.     
+* Added: Ligthbox background transparency.     
+
+= 1.2.90 =
+* Fixed: Ecommerce loading div.   
+* Fixed: Albums mosaic view.     
+* Changed: Featured plugins page.   
+  
+= 1.2.89 =
+* Fixed: Possibility to set featured image for gallery custom post types.     
+* Fixed: Masonry album thumbnail container transparency.     
+* Fixed: Share conflict with Jetpack.     
+* Fixed: Load more.    
 
 = 1.2.88 =
 *  Fixed: Prevent javascript errors with empty options.      
@@ -666,18 +757,23 @@ This vulnerability was discovered by Fortinet's FortiGuard Labs.
 ==Wordpress Photo Gallery Step by step guide==    
   
 = Step 1: Installing the Gallery =   
-1.1 Minimum requirements.  
-Wordpress 3.4+  
-PHP 5.x  
-MySQL 5.x  
-  
-1.2 Perform a new installation.  
-Log in to the administrator panel.  
-Go to Plugins Add > New > Upload.  
-Click `Choose file` (`Browse`) and select the Photo Gallery zip file.  
-Click `Upload&Install` button.  
-Click `Activate Plugin` button for activating the plugin.  
-If the installation succeeded you will see the success message. If any problem occurs, please [click here to contact us](https://web-dorado.com/support/contact-us.html).  
+1.1 Minimal requirements.
+
+WordPress 3.4+
+PHP 5.x
+MySQL 5.x
+
+1.2 Installation.
+
+Log-in to your WordPress administrator panel.
+Select Plugins page from toolbar menu, click Add New.
+Search for  Photo Gallery in the right-top search bar if you want to download the Free version or click Upload Plugin button > "Choose file" ("Browse") and select the  Photo Gallery zip file if you are installing the Professional version of  Photo Gallery.
+
+For Mac Users
+Go to your Downloads folder and locate the folder with the  Photo Gallery. Right-click on the folder and select Compress. This will create a .zip file which can be installed as described below:
+Click "Upload & Install" button.
+Click "Activate Plugin" button for activating the plugin.
+If any problem occurs with installation of  Photo Gallery, please let us know using ["Contact Us"](https://web-dorado.com/support/contact-us.html) form. 
   
   
   

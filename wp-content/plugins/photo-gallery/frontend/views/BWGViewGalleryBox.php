@@ -22,21 +22,19 @@ class BWGViewGalleryBox {
   ////////////////////////////////////////////////////////////////////////////////////////
   public function display() {
     global $WD_BWG_UPLOAD_DIR;
-    global $wp;
     require_once(WD_BWG_DIR . '/framework/WDWLibraryEmbed.php');
-    $current_url = (isset($_GET['current_url']) ? add_query_arg(esc_html($_GET['current_url']), '', home_url($wp->request)) : '');
     $tag_id = (isset($_GET['tag_id']) ? esc_html($_GET['tag_id']) : 0);
-    $gallery_id = (isset($_GET['gallery_id']) ? esc_html($_GET['gallery_id']) : 0);
+    $gallery_id = WDWLibrary::esc_script('get', 'gallery_id', 0, 'int');
     $bwg = (isset($_GET['current_view']) ? esc_html($_GET['current_view']) : 0);
-    $current_image_id = (isset($_GET['image_id']) ? esc_html($_GET['image_id']) : 0);
+    $current_image_id = WDWLibrary::esc_script('get', 'image_id', 0, 'int');
     $theme_id = (isset($_GET['theme_id']) ? esc_html($_GET['theme_id']) : 1);
     $thumb_width = (isset($_GET['thumb_width']) ? esc_html($_GET['thumb_width']) : 120);
     $thumb_height = (isset($_GET['thumb_height']) ? esc_html($_GET['thumb_height']) : 90);
-    $open_with_fullscreen = (isset($_GET['open_with_fullscreen']) ? esc_html($_GET['open_with_fullscreen']) : 0);
-    $open_with_autoplay = (isset($_GET['open_with_autoplay']) ? esc_html($_GET['open_with_autoplay']) : 0);
-    $image_width = (isset($_GET['image_width']) ? esc_html($_GET['image_width']) : 800);
-    $image_height = (isset($_GET['image_height']) ? esc_html($_GET['image_height']) : 500);
-    $image_effect = ((isset($_GET['image_effect']) && esc_html($_GET['image_effect'])) ? esc_html($_GET['image_effect']) : 'fade');
+    $open_with_fullscreen = WDWLibrary::esc_script('get', 'open_with_fullscreen', 0, 'int');
+    $open_with_autoplay = WDWLibrary::esc_script('get', 'open_with_autoplay', 0, 'int');
+    $image_width = WDWLibrary::esc_script('get', 'image_width', 800, 'int');
+    $image_height = WDWLibrary::esc_script('get', 'image_height', 500, 'int');
+    $image_effect = WDWLibrary::esc_script('get', 'image_effect', 'fade');
     $sort_by = (isset($_GET['wd_sor']) ? esc_html($_GET['wd_sor']) : 'order');
     $order_by = (isset($_GET['wd_ord']) ? esc_html($_GET['wd_ord']) : 'asc');
     $enable_image_filmstrip = FALSE;
@@ -44,19 +42,10 @@ class BWGViewGalleryBox {
     $popup_enable_info = (isset($_GET['popup_enable_info']) ? esc_html($_GET['popup_enable_info']) : 1);
     $popup_info_always_show = (isset($_GET['popup_info_always_show']) ? esc_html($_GET['popup_info_always_show']) : 0);
     $popup_info_full_width = (isset($_GET['popup_info_full_width']) ? esc_html($_GET['popup_info_full_width']) : 0);
-    $popup_enable_rate = (isset($_GET['popup_enable_rate']) ? esc_html($_GET['popup_enable_rate']) : 0);
+    $popup_enable_rate = WDWLibrary::esc_script('get', 'popup_enable_rate', 0, 'int');
     $popup_hit_counter = (isset($_GET['popup_hit_counter']) ? esc_html($_GET['popup_hit_counter']) : 0);
-    $show_tag_box = (isset($_GET['show_tag_box']) ? esc_html($_GET['show_tag_box']) : 0);
+    $slideshow_effect_duration = (isset($_GET['slideshow_effect_duration']) ? (int) $_GET['slideshow_effect_duration'] : 1);
 
-    if ($enable_image_filmstrip) {
-      $image_filmstrip_height = (isset($_GET['image_filmstrip_height']) ? esc_html($_GET['image_filmstrip_height']) : '20');
-      $thumb_ratio = $thumb_width / $thumb_height;
-      $image_filmstrip_width = round($thumb_ratio * $image_filmstrip_height);
-    }
-    else {
-      $image_filmstrip_height = 0;
-      $image_filmstrip_width = 0;
-    }
 
     $slideshow_interval = (isset($_GET['slideshow_interval']) ? (int) $_GET['slideshow_interval'] : 5);
     $enable_image_ctrl_btn = (isset($_GET['enable_image_ctrl_btn']) ? esc_html($_GET['enable_image_ctrl_btn']) : 0);
@@ -82,6 +71,8 @@ class BWGViewGalleryBox {
     $theme_row = $this->model->get_theme_row_data($theme_id);
     $option_row = $this->model->get_option_row_data();
     $image_right_click = $option_row->image_right_click;
+    $image_filmstrip_height = 0;
+    $image_filmstrip_width = 0;	
 
     if ($tag_id != 0) {
       $image_rows = $this->model->get_image_rows_data_tag($tag_id, $sort_by, $order_by);
@@ -90,57 +81,6 @@ class BWGViewGalleryBox {
       $image_rows = $this->model->get_image_rows_data($gallery_id, $bwg, $sort_by, $order_by);
     }
     $image_id = (isset($_POST['image_id']) ? (int) $_POST['image_id'] : $current_image_id);
-    $comment_rows = $this->model->get_comment_rows_data($image_id);
-
-    $params_array = array(
-      'action' => 'GalleryBox',
-      'image_id' => $current_image_id,
-      'gallery_id' => $gallery_id,
-      'theme_id' => $theme_id,
-      'thumb_width' => $thumb_width,
-      'thumb_height' => $thumb_height,
-      'open_with_fullscreen' => $open_with_fullscreen,
-      'image_width' => $image_width,
-      'image_height' => $image_height,
-      'image_effect' => $image_effect,
-      'wd_sor' => $sort_by,
-      'wd_ord' => $order_by,
-      'enable_image_filmstrip' => $enable_image_filmstrip,
-      'image_filmstrip_height' => $image_filmstrip_height,
-      'enable_image_ctrl_btn' => $enable_image_ctrl_btn,
-      'enable_image_fullscreen' => $enable_image_fullscreen,
-      'popup_enable_info' => $popup_enable_info,
-      'popup_info_always_show' => $popup_info_always_show,
-      'popup_info_full_width' => $popup_info_full_width,
-      'popup_hit_counter' => $popup_hit_counter,
-      'popup_enable_rate' => $popup_enable_rate,
-      'slideshow_interval' => $slideshow_interval,
-      'enable_comment_social' => $enable_comment_social,
-      'enable_image_facebook' => $enable_image_facebook,
-      'enable_image_twitter' => $enable_image_twitter,
-      'enable_image_google' => $enable_image_google,
-      'enable_image_pinterest' => $enable_image_pinterest,
-      'enable_image_tumblr' => $enable_image_tumblr,
-      'watermark_type' => $watermark_type,
-      'current_url' => $current_url
-    );
-    if ($watermark_type != 'none') {
-      $params_array['watermark_link'] = $watermark_link;
-      $params_array['watermark_opacity'] = $watermark_opacity;
-      $params_array['watermark_position'] = $watermark_position;
-    }
-    if ($watermark_type == 'text') {
-      $params_array['watermark_text'] = $watermark_text;
-      $params_array['watermark_font_size'] = $watermark_font_size;
-      $params_array['watermark_font'] = $watermark_font;
-      $params_array['watermark_color'] = $watermark_color;
-    }
-    elseif ($watermark_type == 'image') {
-      $params_array['watermark_url'] = $watermark_url;
-      $params_array['watermark_width'] = $watermark_width;
-      $params_array['watermark_height'] = $watermark_height;
-    }
-    $popup_url = add_query_arg(array($params_array), admin_url('admin-ajax.php'));
     $filmstrip_thumb_margin = $theme_row->lightbox_filmstrip_thumb_margin;
     $margins_split = explode(" ", $filmstrip_thumb_margin);
     $filmstrip_thumb_margin_right = 0;
@@ -162,6 +102,8 @@ class BWGViewGalleryBox {
     $rgb_bwg_image_info_bg_color = WDWLibrary::spider_hex2rgb($theme_row->lightbox_info_bg_color);
     $rgb_bwg_image_hit_bg_color = WDWLibrary::spider_hex2rgb($theme_row->lightbox_hit_bg_color);
     $rgb_lightbox_ctrl_cont_bg_color = WDWLibrary::spider_hex2rgb($theme_row->lightbox_ctrl_cont_bg_color);
+    $lightbox_bg_transparent = (isset($theme_row->lightbox_bg_transparent)) ? $theme_row->lightbox_bg_transparent : 100;
+    $lightbox_bg_color = WDWLibrary::spider_hex2rgb($theme_row->lightbox_bg_color); 
 
     $current_filename = '';
 
@@ -173,7 +115,7 @@ class BWGViewGalleryBox {
         box-sizing: border-box;
       }
       .spider_popup_wrap {
-        background-color: #<?php echo $theme_row->lightbox_bg_color; ?>;
+        background-color: rgba(<?php echo $lightbox_bg_color['red']; ?>, <?php echo $lightbox_bg_color['green']; ?>, <?php echo $lightbox_bg_color['blue']; ?>, <?php echo number_format($lightbox_bg_transparent/ 100, 2, ".", ""); ?>);
         display: inline-block;
         left: 50%;
         outline: medium none;
@@ -693,7 +635,7 @@ class BWGViewGalleryBox {
         border: <?php echo $theme_row->lightbox_info_border_width; ?>px <?php echo $theme_row->lightbox_info_border_style; ?> #<?php echo $theme_row->lightbox_info_border_color; ?>;
         border-radius: <?php echo $theme_row->lightbox_info_border_radius; ?>;
         <?php echo ((!$enable_image_filmstrip || $theme_row->lightbox_filmstrip_pos != 'bottom') && $theme_row->lightbox_ctrl_btn_pos == 'bottom' && $theme_row->lightbox_info_pos == 'bottom') ? 'bottom: ' . ($theme_row->lightbox_ctrl_btn_height + 2 * $theme_row->lightbox_ctrl_btn_margin_top) . 'px;' : '' ?>
-        <?php if($params_array['popup_info_full_width']) { ?>
+        <?php if ($popup_info_full_width) { ?>
         width: 100%;
         <?php } else { ?>
         width: 33%;
@@ -796,6 +738,16 @@ class BWGViewGalleryBox {
         data["<?php echo $key; ?>"]["id"] = "<?php echo $image_row->id; ?>";
         data["<?php echo $key; ?>"]["alt"] = "<?php echo str_replace(array("\r\n", "\n", "\r"), esc_html('<br />'), $image_row->alt); ?>";
         data["<?php echo $key; ?>"]["description"] = "<?php echo str_replace(array("\r\n", "\n", "\r"), esc_html('<br />'), $image_row->description); ?>";
+        <?php
+        $image_resolution = explode(' x ', $image_row->resolution);
+        if (is_array($image_resolution)) {
+          $instagram_post_width = $image_resolution[0];
+          $instagram_post_height = explode(' ', $image_resolution[1]);
+          $instagram_post_height = $instagram_post_height[0];
+        }
+        ?>
+        data["<?php echo $key; ?>"]["image_width"] = "<?php echo $instagram_post_width; ?>";
+        data["<?php echo $key; ?>"]["image_height"] = "<?php echo $instagram_post_height; ?>";
         data["<?php echo $key; ?>"]["image_url"] = "<?php echo $image_row->image_url; ?>";
         data["<?php echo $key; ?>"]["thumb_url"] = "<?php echo $image_row->thumb_url; ?>";
         data["<?php echo $key; ?>"]["date"] = "<?php echo $image_row->date; ?>";
@@ -945,16 +897,26 @@ class BWGViewGalleryBox {
                       else {  /*$is_embed*/ ?>
                         <span class="bwg_popup_embed bwg_popup_watermark" style="diplay: table; table-layout: fixed;">
                         <?php
-                        if($is_embed_instagram_post){
-                          $post_width = $image_width - ($filmstrip_direction == 'vertical' ? $image_filmstrip_width : 0);
-                          $post_height = $image_height - ($filmstrip_direction == 'horizontal' ? $image_filmstrip_height : 0);
-                          if($post_height <$post_width +88 ){
-                            $post_width =$post_height -88; 
+                        if ($is_embed_instagram_post) {
+                          $post_width = $image_width;
+                          $post_height = $image_height;
+                          if ($post_height < $post_width + 88) {
+                            $post_width = $post_height - 88;
                           }
-                          else{
-                           $post_height =$post_width +88;  
+                          else {
+                           $post_height = $post_width + 88;
                           }
-                          WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('class'=>"bwg_embed_frame", 'frameborder'=>"0", 'style'=>"width:".$post_width."px; height:".$post_height."px; vertical-align:middle; display:inline-block; position:relative;"));
+
+                          $instagram_post_width = $post_width;
+                          $instagram_post_height = $post_height;
+                          $image_resolution = explode(' x ', $image_row->resolution);
+                          if (is_array($image_resolution)) {
+                            $instagram_post_width = $image_resolution[0];
+                            $instagram_post_height = explode(' ', $image_resolution[1]);
+                            $instagram_post_height = $instagram_post_height[0];
+                          }
+                          
+                          WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('class' => "bwg_embed_frame", 'data-width' => $instagram_post_width, 'data-height' => $instagram_post_height, 'frameborder' => "0", 'style' => "width:" . $post_width . "px; height:" . $post_height . "px; vertical-align:middle; display:inline-block; position:relative;"));
                         }
                         else{
                         WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('class'=>"bwg_embed_frame", 'frameborder'=>"0", 'allowfullscreen'=>"allowfullscreen", 'style'=>"width:inherit; height:inherit; vertical-align:middle; display:table-cell;"));
@@ -986,7 +948,7 @@ class BWGViewGalleryBox {
     <script language="javascript" type="text/javascript" src="<?php echo WD_BWG_URL . '/js/bwg_embed.js?ver='.wd_bwg_version(); ?>"></script>
     <script>
       var bwg_trans_in_progress = false;
-      var bwg_transition_duration = <?php echo (($slideshow_interval < 4) && ($slideshow_interval != 0)) ? ($slideshow_interval * 1000) / 4 : 800; ?>;
+      var bwg_transition_duration = <?php echo (($slideshow_interval < 4) && ($slideshow_interval != 0)) ? ($slideshow_interval * 1000) / 4 : ($slideshow_effect_duration * 1000); ?>;
       var bwg_playInterval;
       if ((jQuery("#spider_popup_wrap").width() >= jQuery(window).width()) || (jQuery("#spider_popup_wrap").height() >= jQuery(window).height())) {
         jQuery(".spider_popup_close").attr("class", "bwg_ctrl_btn spider_popup_close_fullscreen");
@@ -1369,7 +1331,7 @@ class BWGViewGalleryBox {
         });
         if (typeof data[key] != 'undefined') {
           if (typeof data[current_key] != 'undefined') {
-            if (jQuery(".bwg_play_pause") && !jQuery(".bwg_play_pause").hasClass("fa-play")) {
+            if (jQuery(".bwg_play_pause").length && !jQuery(".bwg_play_pause").hasClass("fa-play")) {
               bwg_play();
             }
             if (!from_effect) {
@@ -1429,18 +1391,18 @@ class BWGViewGalleryBox {
           else { /*is_embed*/
 
             innhtml += '<span style="height: ' + cur_height + 'px; width: ' + cur_width + 'px;" class="bwg_popup_embed bwg_popup_watermark">';
-            if(is_embed_instagram_post){
+            if (is_embed_instagram_post) {
               var post_width = 0;
               var post_height = 0;
-              if(cur_height <cur_width +88 ){
+              if (cur_height < cur_width + 88) {
                 post_height = cur_height;
-                post_width = post_height -88; 
+                post_width = post_height - 88;
               }
-              else{
+              else {
                 post_width = cur_width;
-                post_height = post_width +88 ;  
+                post_height = post_width + 88;
               }
-              innhtml += spider_display_embed(data[key]['filetype'], data[key]['filename'], {class:"bwg_embed_frame",  frameborder:"0", allowfullscreen:"allowfullscreen", style:"width:"+post_width+"px; height:"+post_height+"px; vertical-align:middle; display:inline-block; position:relative; top: "+0.5*(cur_height-post_height)+ "px; " });
+              innhtml += spider_display_embed(data[key]['filetype'], data[key]['filename'], {class:"bwg_embed_frame", 'data-width': data[key]['image_width'], 'data-height': data[key]['image_height'], frameborder: "0", allowfullscreen: "allowfullscreen", style: "width:" + post_width + "px; height:" + post_height + "px; vertical-align:middle; display:inline-block; position:relative;"});
             }
             else{
               innhtml += spider_display_embed(data[key]['filetype'], data[key]['filename'], {class:"bwg_embed_frame", frameborder:"0", allowfullscreen:"allowfullscreen", style:"width:inherit; height:inherit; vertical-align:middle; display:table-cell;" });
@@ -1506,6 +1468,7 @@ class BWGViewGalleryBox {
               <?php
             }
             ?>
+            bwg_resize_instagram_post();
           }
           if (!is_embed) {
             var cur_img = jQuery(next_image_class).find('img');
@@ -1606,7 +1569,6 @@ class BWGViewGalleryBox {
           jQuery(".bwg_popup_embed").css({
             height: <?php echo $image_height - $image_filmstrip_height; ?>
           });
-          bwg_resize_instagram_post();
           bwg_popup_current_height = <?php echo $image_height; ?>;
         }
         else {
@@ -1623,7 +1585,6 @@ class BWGViewGalleryBox {
           jQuery(".bwg_popup_embed").css({
             height: jQuery(window).height() - <?php echo $image_filmstrip_height; ?>
           });
-          bwg_resize_instagram_post();
           bwg_popup_current_height = jQuery(window).height();
         }
         if (!(!(jQuery(window).width() >= <?php echo $image_width; ?>) || !(<?php echo $open_with_fullscreen; ?> != 1))) {
@@ -1634,13 +1595,13 @@ class BWGViewGalleryBox {
             zIndex: 100000
           });
           jQuery(".bwg_image_wrap").css({width: <?php echo $image_width; ?> - comment_container_width});
+          jQuery(".bwg_image_container").css({width: <?php echo $image_width; ?> - comment_container_width});
           jQuery(".bwg_popup_image").css({
             maxWidth: <?php echo $image_width; ?> - comment_container_width
           });
           jQuery(".bwg_popup_embed").css({
             width: <?php echo $image_width; ?> - comment_container_width
           });
-          bwg_resize_instagram_post();
           jQuery(".bwg_filmstrip_container").css({width: <?php echo $image_width; ?> - comment_container_width});
           jQuery(".bwg_filmstrip").css({width: (<?php echo $image_width; ?>  - comment_container_width- 40)});
           bwg_popup_current_width = <?php echo $image_width; ?>;
@@ -1653,18 +1614,19 @@ class BWGViewGalleryBox {
             zIndex: 100000
           });
           jQuery(".bwg_image_wrap").css({width: (jQuery(window).width() - comment_container_width)});
+          jQuery(".bwg_image_container").css({width: jQuery(window).width() - comment_container_width});
           jQuery(".bwg_popup_image").css({
             maxWidth: jQuery(window).width() - comment_container_width
           });
           jQuery(".bwg_popup_embed").css({
             width: jQuery(window).width() - comment_container_width
           });
-          bwg_resize_instagram_post();
           jQuery(".bwg_filmstrip_container").css({width: (jQuery(window).width() - comment_container_width)});
           jQuery(".bwg_filmstrip").css({width: (jQuery(window).width() - comment_container_width - 40)});
           bwg_popup_current_width = jQuery(window).width();
         }
         /* Set watermark container size.*/
+        bwg_resize_instagram_post();
         bwg_change_watermark_container();
         if (!(!(jQuery(window).height() > <?php echo $image_height - 2 * $theme_row->lightbox_close_btn_top; ?>) || !(jQuery(window).width() >= <?php echo $image_width - 2 * $theme_row->lightbox_close_btn_right; ?>) || !(<?php echo $open_with_fullscreen; ?> != 1))) {
           jQuery(".spider_popup_close_fullscreen").attr("class", "spider_popup_close");
@@ -1789,7 +1751,7 @@ class BWGViewGalleryBox {
           }
         }
       }
-      jQuery(document).ready(function () {
+      /* jQuery(document).ready(function () { */
       	<?php
         if ($image_right_click) {
           ?>
@@ -1997,7 +1959,7 @@ class BWGViewGalleryBox {
               zIndex: 100000
             }, 500);
             jQuery(".bwg_image_wrap").animate({width: bwg_popup_current_width - comment_container_width}, 500);
-            jQuery(".bwg_image_container").animate({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>}, 500);
+            jQuery(".bwg_image_container").animate({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>, width: bwg_popup_current_width - comment_container_width}, 500);
             jQuery(".bwg_popup_image").animate({
                 maxWidth: bwg_popup_current_width - comment_container_width,
                 maxHeight: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>
@@ -2047,7 +2009,7 @@ class BWGViewGalleryBox {
               zIndex: 100000
             }, 500);
             jQuery(".bwg_image_wrap").animate({width: (jQuery(window).width() - comment_container_width)}, 500);
-            jQuery(".bwg_image_container").animate({height: (bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>)}, 500);
+            jQuery(".bwg_image_container").animate({height: (bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>), width: bwg_popup_current_width - comment_container_width}, 500);
             jQuery(".bwg_popup_image").animate({
                 maxWidth: jQuery(window).width() - comment_container_width,
                 maxHeight: jQuery(window).height() - <?php echo $image_filmstrip_height; ?>
@@ -2108,7 +2070,7 @@ class BWGViewGalleryBox {
                 zIndex: 100000
               });
               jQuery(".bwg_image_wrap").css({width: bwg_popup_current_width - comment_container_width});
-              jQuery(".bwg_image_container").css({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>});
+              jQuery(".bwg_image_container").css({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>, width: bwg_popup_current_width - comment_container_width});
               /*jQuery(".bwg_slide_bg").css({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>});
               jQuery(".bwg_popup_image_spun1").css({height: bwg_popup_current_height - <?php echo $image_filmstrip_height; ?>});*/
               jQuery(".bwg_popup_image").css({
@@ -2161,7 +2123,7 @@ class BWGViewGalleryBox {
                   zIndex: 100000
                 });
                 jQuery(".bwg_image_wrap").css({width: screen_width - comment_container_width});
-                jQuery(".bwg_image_container").css({height: (screen_height - <?php echo $image_filmstrip_height; ?>)});
+                jQuery(".bwg_image_container").css({height: (screen_height - <?php echo $image_filmstrip_height; ?>), width: screen_width - comment_container_width});
                 /* jQuery(".bwg_slide_bg").css({height: screen_height - <?php echo $image_filmstrip_height; ?>});*/
                 jQuery(".bwg_popup_image").css({
                   maxWidth: (screen_width - comment_container_width),
@@ -2191,7 +2153,7 @@ class BWGViewGalleryBox {
         });
         /* Play/pause.*/
         jQuery(".bwg_play_pause, .bwg_popup_image").on(bwg_click, function () {
-          if (jQuery(".bwg_play_pause") && jQuery(".bwg_play_pause").hasClass("fa-play")) {
+          if (jQuery(".bwg_play_pause").length && jQuery(".bwg_play_pause").hasClass("fa-play")) {
             /* Play.*/
             bwg_play();
             jQuery(".bwg_play_pause").attr("title", "<?php echo __('Pause', 'bwg'); ?>");
@@ -2229,7 +2191,7 @@ class BWGViewGalleryBox {
         ?>
         jQuery(".bwg_popup_image").removeAttr("width");
         jQuery(".bwg_popup_image").removeAttr("height");
-      });
+     /*  }); */
       /* Open with fullscreen.*/
       function bwg_open_with_fullscreen() {
         jQuery(".bwg_watermark").css({display: 'none'});
@@ -2273,37 +2235,23 @@ class BWGViewGalleryBox {
         jQuery(".spider_popup_close").attr("class", "bwg_ctrl_btn spider_popup_close_fullscreen");         
       }
 
-      function bwg_resize_instagram_post(){
-        jQuery('.bwg_embed_frame').css({'width':'inherit', 'height':'inherit', 'vertical-align':'middle', 'display':'inline-block'});
-        /*jQuery.fn.exists = function(){return this.length>0;}*/
+      function bwg_resize_instagram_post() {
         if (jQuery('.inner_instagram_iframe_bwg_embed_frame').length) {
-          var w = jQuery(".bwg_popup_embed").width();
-          var h = jQuery(".bwg_popup_embed").height();
-          var post_width = 0;
-          var post_height = 0;
-
-          if(h <w +88 ){
-            post_height = h;
-            post_width = h -88; 
-          }
-          else{
-            post_width = w;
-            post_height = w +88 ;  
-          }
+          var post_width = jQuery(".bwg_image_container").width();
+          var post_height = jQuery(".bwg_image_container").height();
           
-          jQuery('.inner_instagram_iframe_bwg_embed_frame').each(function(){
-          
-          post_height = post_height;
-          post_width = post_width;
-          var top_pos = (0.5 *( h-post_height));
-            jQuery(this).parent().css({
-              height: post_height,
-              width: post_width,
-              top:  top_pos
-            });
+          jQuery('.inner_instagram_iframe_bwg_embed_frame').each(function() {
+            var parent_container = jQuery(this).parent();
+            if (post_height / (parseInt(parent_container.attr('data-height')) + 96) < post_width / parseInt(parent_container.attr('data-width'))) {
+              parent_container.height(post_height);
+              parent_container.width((parent_container.height() - 96) * parent_container.attr('data-width') / parent_container.attr('data-height') + 16);
+            }
+            else {
+              parent_container.width(post_width);
+              parent_container.height((parent_container.width() - 16) * parent_container.attr('data-height') / parent_container.attr('data-width') + 96);
+            }
+            parent_container.css({top: 0.5 * (post_height - parent_container.height())});
           });
-
-
           bwg_change_watermark_container();
         }
       }
@@ -2323,7 +2271,7 @@ class BWGViewGalleryBox {
       }
       jQuery(window).focus(function() {
         /* event_stack = [];*/
-          if (jQuery(".bwg_play_pause") && !jQuery(".bwg_play_pause").hasClass("fa-play")) {
+          if (jQuery(".bwg_play_pause").length && !jQuery(".bwg_play_pause").hasClass("fa-play")) {
             bwg_play();
           }
         /*var i = 0;

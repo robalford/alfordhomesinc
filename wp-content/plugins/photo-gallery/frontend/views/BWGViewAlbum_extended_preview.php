@@ -23,8 +23,6 @@ class BWGViewAlbum_extended_preview {
   // Public Methods                                                                     //
   ////////////////////////////////////////////////////////////////////////////////////////
   public function display($params, $from_shortcode = 0, $bwg = 0) {
-    global $wp;
-    $current_url = $wp->query_string;
     global $WD_BWG_UPLOAD_DIR;
     require_once(WD_BWG_DIR . '/framework/WDWLibrary.php');
     $options_row = $this->model->get_options_row_data();
@@ -197,7 +195,7 @@ class BWGViewAlbum_extended_preview {
       'enable_image_pinterest' => $params['popup_enable_pinterest'],
       'enable_image_tumblr' => $params['popup_enable_tumblr'],
       'watermark_type' => $params['watermark_type'],
-      'current_url' => $current_url
+      'slideshow_effect_duration' => isset($params['popup_effect_duration']) ? $params['popup_effect_duration'] : 1
     );
     if ($params['watermark_type'] != 'none') {
       $params_array['watermark_link'] = urlencode($params['watermark_link']);
@@ -216,6 +214,7 @@ class BWGViewAlbum_extended_preview {
       $params_array['watermark_height'] = $params['watermark_height'];
     }
     $tags_rows = $this->model->get_tags_rows_data($album_gallery_id);
+    $image_right_click = $options_row->image_right_click;
     ?>
     <style>
       #bwg_container1_<?php echo $bwg; ?> #bwg_container2_<?php echo $bwg; ?> .bwg_album_extended_thumbnails_<?php echo $bwg; ?> * {
@@ -733,30 +732,38 @@ class BWGViewAlbum_extended_preview {
                   }
                 }
                 foreach ($image_rows as $image_row) {
-                  $is_embed = preg_match('/EMBED/',$image_row->filetype)==1 ? true :false;
-                  $is_embed_video = preg_match('/VIDEO/',$image_row->filetype)==1 ? true :false;
+                  $is_embed = preg_match('/EMBED/', $image_row->filetype) == 1 ? true : false;
+                  $is_embed_video = preg_match('/VIDEO/', $image_row->filetype) == 1 ? true : false;
+                  $is_embed_instagram = preg_match('/EMBED_OEMBED_INSTAGRAM/', $image_row->filetype) == 1 ? true : false;
                   if (!$is_embed) {
                     list($image_thumb_width, $image_thumb_height) = getimagesize(htmlspecialchars_decode(ABSPATH . $WD_BWG_UPLOAD_DIR . $image_row->thumb_url, ENT_COMPAT | ENT_QUOTES));
                   }
                   else {
-                    if($image_row->resolution != ''){
-                      $resolution_arr = explode(" ",$image_row->resolution);
-                      $resolution_w = intval($resolution_arr[0]);
-                      $resolution_h = intval($resolution_arr[2]);
-                      if($resolution_w != 0 && $resolution_h != 0){
-                        $scale = $scale = max($params['extended_album_image_thumb_width'] / $resolution_w, $params['extended_album_image_thumb_height'] / $resolution_h);
-                        $image_thumb_width = $resolution_w * $scale;
-                        $image_thumb_height = $resolution_h * $scale;
+                    if($image_row->resolution != '') {
+                      if (!$is_embed_instagram) {
+                        $resolution_arr = explode(" ",$image_row->resolution);
+                        $resolution_w = intval($resolution_arr[0]);
+                        $resolution_h = intval($resolution_arr[2]);
+                        if($resolution_w != 0 && $resolution_h != 0){
+                          $scale = $scale = max($params['extended_album_image_thumb_width'] / $resolution_w, $params['extended_album_image_thumb_height'] / $resolution_h);
+                          $image_thumb_width = $resolution_w * $scale;
+                          $image_thumb_height = $resolution_h * $scale;
+                        }
+                        else{
+                          $image_thumb_width = $params['extended_album_image_thumb_width'];
+                          $image_thumb_height = $params['extended_album_image_thumb_height'];
+                        }
                       }
-                      else{
-                        $image_thumb_width = $params['extended_album_image_thumb_width'];
-                        $image_thumb_height = $params['extended_album_image_thumb_height'];
+                      else {
+                        // this will be ok while instagram thumbnails width and height are the same
+                        $image_thumb_width = min($params['extended_album_image_thumb_width'], $params['extended_album_image_thumb_height']);
+                        $image_thumb_height = $image_thumb_width;
                       }
                     }
                     else{
                       $image_thumb_width = $params['extended_album_image_thumb_width'];
                       $image_thumb_height = $params['extended_album_image_thumb_height'];
-                    }
+                    }               
                   }
                   $scale = max($params['extended_album_image_thumb_width'] / $image_thumb_width, $params['extended_album_image_thumb_height'] / $image_thumb_height);
                   $image_thumb_width *= $scale;
@@ -856,6 +863,17 @@ class BWGViewAlbum_extended_preview {
             return false;
           }
         });
+         <?php 
+        if ($image_right_click) {
+          ?>
+          /* Disable right click.*/
+          jQuery('div[id^="bwg_container"]').bind("contextmenu", function () {
+            return false;
+          });
+          jQuery('div[id^="bwg_container"]').css('webkitTouchCallout','none');
+          <?php
+        }
+        ?>
       }
       jQuery(document).ready(function () {
         bwg_document_ready_<?php echo $bwg; ?>();

@@ -23,6 +23,10 @@ class BWGViewOptions_bwg {
   // Public Methods                                                                     //
   ////////////////////////////////////////////////////////////////////////////////////////
   public function display($reset = FALSE) {
+    if (isset($_GET['bwg_start_tour']) && $_GET['bwg_start_tour'] == '1') {
+      update_user_meta(get_current_user_id(), 'bwg_photo_gallery', '1');
+      WDWLibrary::spider_redirect('admin.php?page=options_bwg');
+    }
     global $WD_BWG_UPLOAD_DIR;
     ?>
     <div style="clear: both; float: left; width: 99%;">
@@ -88,7 +92,7 @@ class BWGViewOptions_bwg {
     <form method="post" class="wrap bwg_form" action="admin.php?page=options_bwg" style="float: left; width: 99%;">      
       <?php wp_nonce_field( 'options_bwg', 'bwg_nonce' ); ?>
       <span class="option-icon"></span>
-      <h2><?php _e("Edit options", 'bwg_back'); ?></h2>
+      <h2 id="ed_options"><?php _e("Edit options", 'bwg_back'); ?></h2>
       <div style="display: inline-block; width: 100%;">
         <div style="float: right;">
           <input class="button-primary" type="submit" onclick="if (spider_check_required('title', 'Title')) {return false;}; spider_set_input_value('task', 'save')" value="<?php _e("Save", 'bwg_back'); ?>" />
@@ -118,6 +122,17 @@ class BWGViewOptions_bwg {
         <div class="spider_div_options" id="div_content_1">
           <table>
             <tbody>
+             <tr>
+                <td class="spider_label_options">
+                  <label><?php echo __('Introduction tour:', 'bwg_back'); ?></label>
+                </td>
+                <td>
+                  <a href="admin.php?page=options_bwg&bwg_start_tour=1" class="button" title="<?php echo _e('Start tour', 'bwg_back'); ?>">
+                    <?php _e('Start tour', 'bwg_back'); ?>
+                  </a>
+                  <div class="spider_description"><?php echo __('Take this tour to quickly learn about the use of this plugin.', 'bwg_back'); ?></div>
+                </td>
+              </tr>
               <tr>
                 <td class="spider_label_options">
                   <label for="images_directory"><?php _e("Images directory:", 'bwg_back'); ?></label>
@@ -439,6 +454,12 @@ class BWGViewOptions_bwg {
                             </tr>
                           </tbody>
                         </table>
+                        <input type="submit" class="button-secondary" title="<?php _e('Set watermark', 'bwg_back'); ?>" style="margin-top: 5px;"
+                               onclick="spider_set_input_value('task', 'save'); spider_set_input_value('watermark', 'image_set_watermark');"
+                               value="<?php _e('Set Watermark', 'bwg_back'); ?>"/>
+                        <input type="submit" class="button-secondary" title="<?php _e('Reset watermark', 'bwg_back'); ?>" style="margin-top: 5px;"
+                               onclick="spider_set_input_value('task', 'image_recover_all');"
+                               value="<?php echo __('Reset Watermark', 'bwg_back'); ?>"/>
                         <div class="spider_description"></div>
                       </td>
                     </tr>
@@ -647,6 +668,15 @@ class BWGViewOptions_bwg {
                           }
                           ?>
                         </select>
+                        <div class="spider_description"></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="spider_label_options">
+                        <label for="popup_effect_duration"><?php echo __('Effect duration:', 'bwg_back'); ?> </label>
+                      </td>
+                      <td>
+                        <input type="text" name="popup_effect_duration" id="popup_effect_duration" value="<?php echo $row->popup_effect_duration; ?>" class="spider_int_input" /> sec.
                         <div class="spider_description"></div>
                       </td>
                     </tr>
@@ -1071,6 +1101,15 @@ class BWGViewOptions_bwg {
                         <div class="spider_description"></div>
                       </td>
                     </tr>
+                     <tr>
+                      <td class="spider_label_options">
+                        <label for="slideshow_effect_duration"><?php echo __('Effect duration:', 'bwg_back'); ?> </label>
+                      </td>
+                      <td>
+                        <input type="text" name="slideshow_effect_duration" id="slideshow_effect_duration" value="<?php echo $row->slideshow_effect_duration; ?>" class="spider_int_input" /> sec.
+                        <div class="spider_description"></div>
+                      </td>
+                    </tr>
                     <tr>
                       <td class="spider_label_options">
                         <label for="slideshow_interval"><?php _e("Time interval:", 'bwg_back'); ?> </label>
@@ -1332,6 +1371,7 @@ class BWGViewOptions_bwg {
                 <td>
                   <input type="text" name="upload_thumb_width" id="upload_thumb_width" value="<?php echo $row->upload_thumb_width; ?>" class="spider_int_input" /> x 
                   <input type="text" name="upload_thumb_height" id="upload_thumb_height" value="<?php echo $row->upload_thumb_height; ?>" class="spider_int_input" /> px
+                  <input type="submit" class="button-secondary" onclick="spider_set_input_value('task', 'save'); spider_set_input_value('recreate', 'resize_image_thumb');" value="<?php echo __('Recreate', 'bwg_back'); ?>" />
                   <div class="spider_description"><?php _e("The maximum size of the generated thumbnail. Its dimensions should be larger than the ones of the frontend thumbnail.", 'bwg_back'); ?></div>
                 </td>
               </tr>
@@ -1631,13 +1671,13 @@ class BWGViewOptions_bwg {
               </td>
             </tr>
           </table>
-	  <div class="spider_description spider_free_version"><?php _e("Carousel view is disabled in free version.", 'bwg_back'); ?></div>
+          <div class="spider_description spider_free_version"><?php _e("Carousel view is disabled in free version.", 'bwg_back'); ?></div>
         </div>
-
       </div>
-              
       <input id="task" name="task" type="hidden" value="" />
+      <input id="recreate" name="recreate" type="hidden" value="" />
       <input id="current_id" name="current_id" type="hidden" value="<?php echo $row->id; ?>" />
+      <input id="watermark" name="watermark" type="hidden" value="" />
       <script>
         window.onload = bwg_change_option_type('<?php echo isset($_POST['type']) ? esc_html($_POST['type']) : '1'; ?>');
         window.onload = bwg_inputs();

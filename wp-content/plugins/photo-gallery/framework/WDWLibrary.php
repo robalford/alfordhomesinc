@@ -144,6 +144,18 @@ class WDWLibrary {
           break;
 
         }
+         case 18: {
+          $message = __('Theme successfully copied.', 'bwg_back');
+          $type = 'updated';
+          break;
+
+        }
+        case 19: {
+          $message = __('Failed.', 'bwg_back');
+          $type = 'error';
+          break;
+
+        }
       }
       return '<div style="width:99%"><div class="' . $type . '"><p><strong>' . $message . '</strong></p></div></div>';
     }
@@ -493,6 +505,9 @@ class WDWLibrary {
       else {
         $items_county = ($count_items - $count_items % $limit) / $limit;
       }
+      if ($pagination == 2) {
+        $items_county++;
+      }
     }
     else {
       $items_county = 1;
@@ -619,25 +634,23 @@ class WDWLibrary {
         }
         spider_frontend_ajax('<?php echo $form_id; ?>', '<?php echo $current_view; ?>', '<?php echo $id; ?>', '<?php echo $album_gallery_id; ?>', '', '<?php echo $type; ?>', 0, '', '', load_more);
       }
-      jQuery(document).ready(function() {
-        jQuery('.<?php echo $first_page; ?>').on('click', function() {
-          spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, -2);
-        });
-        jQuery('.<?php echo $prev_page; ?>').on('click', function() {
-          spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, -1);
-          return false;
-        });
-        jQuery('.<?php echo $next_page; ?>').on('click', function() {
-          spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 1);
-          return false;
-        });
-        jQuery('.<?php echo $last_page; ?>').on('click', function() {
-          spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 2);
-        });
-        jQuery('.bwg_load_btn_<?php echo $current_view; ?>').on('click', function() {
-          spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 1, true);
-          return false;
-        });
+      jQuery('.<?php echo $first_page; ?>').on('click', function() {
+        spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, -2);
+      });
+      jQuery('.<?php echo $prev_page; ?>').on('click', function() {
+        spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, -1);
+        return false;
+      });
+      jQuery('.<?php echo $next_page; ?>').on('click', function() {
+        spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 1);
+        return false;
+      });
+      jQuery('.<?php echo $last_page; ?>').on('click', function() {
+        spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 2);
+      });
+      jQuery('.bwg_load_btn_<?php echo $current_view; ?>').on('click', function() {
+        spider_page_<?php echo $current_view; ?>(this, <?php echo $page_number; ?>, 1, true);
+        return false;
       });
     </script>
     </span>
@@ -920,6 +933,22 @@ class WDWLibrary {
         | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
         | \xF4[\x80-\x8F][\x80-\xBF]{2}      # plane 16
     )%xs', '', $string);    
+  }
+
+  public static function esc_script($method = '', $index = '', $default = '', $type = 'string') {
+    if ($method == 'post') {
+      $escaped_value = ((isset($_POST[$index]) && preg_match("/^[A-Za-z0-9_]+$/", $_POST[$index])) ? esc_js($_POST[$index]) : $default);
+    }
+    elseif ($method == 'get') {
+      $escaped_value = ((isset($_GET[$index]) && preg_match("/^[A-Za-z0-9_]+$/", $_GET[$index])) ? esc_js($_GET[$index]) : $default);
+    }
+    else {
+      $escaped_value = (preg_match("/^[a-zA-Z0-9]", $index) ? esc_js($index) : $default);
+    }
+    if ($type == 'int') {
+      $escaped_value = (int) $escaped_value;
+    }
+    return $escaped_value;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////

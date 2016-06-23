@@ -262,6 +262,10 @@ class  BWGViewThemes_bwg {
       <h2><?php echo $page_title; ?></h2>
       <div style="float: right; margin: 0 5px 0 0;">
         <input class="button-secondary" type="submit" onclick="if (spider_check_required('name', 'Name')) {return false;}; spider_set_input_value('task', 'save')" value="<?php _e("Save", 'bwg_back'); ?>"/>
+        <?php if ($id) { ?>
+        <input class="button-secondary" type="submit" onclick="if (spider_check_required('name', 'Name')) {return false;}; spider_set_input_value('task', 'save');
+                                                                  spider_set_input_value('save_as_copy', 1)" value="<?php echo __('Save as Copy', 'bwg_back'); ?>" />
+        <?php } ?>
         <input class="button-secondary" type="submit" onclick="if (spider_check_required('name', 'Name')) {return false;}; spider_set_input_value('task', 'apply')" value="<?php _e("Apply", 'bwg_back'); ?>"/>
         <input class="button-secondary" type="submit" onclick="spider_set_input_value('task', 'cancel')" value="<?php _e("Cancel", 'bwg_back'); ?>"/>
         <input title="Reset to default theme" class="button-primary" type="submit" onclick="if (confirm('<?php echo addslashes(__("Do you want to reset to default?", 'bwg_back')); ?>')) {
@@ -2265,6 +2269,13 @@ class  BWGViewThemes_bwg {
                   <td class="spider_label"><label for="lightbox_bg_color"><?php _e("Lightbox background color:", 'bwg_back'); ?> </label></td>
                   <td>
                     <input type="text" name="lightbox_bg_color" id="lightbox_bg_color" value="<?php echo $row->lightbox_bg_color; ?>" class="color"/>
+                  </td>
+                </tr>
+                <tr id="lightbox_transparency">
+                  <td class="spider_label"><label for="lightbox_bg_transparent"><?php echo __('Lightbox background transparency:', 'bwg_back'); ?> </label></td>
+                  <td>
+                    <input type="text" name="lightbox_bg_transparent" id="lightbox_bg_transparent" value="<?php echo $row->lightbox_bg_transparent; ?>" class="spider_int_input" onkeypress="return spider_check_isnum(event)"/> %
+                    <div class="spider_description"><?php echo __('Value must be between 0 to 100.', 'bwg_back'); ?></div>
                   </td>
                 </tr>
                 <tr id="lightbox_cntrl1">

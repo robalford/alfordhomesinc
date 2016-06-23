@@ -54,9 +54,11 @@ class FilemanagerView {
       $sort_icon = $icons_dir_url . '/' . $sort_order;
       wp_print_scripts('jquery');
       wp_print_scripts('jquery-ui-widget');
+      wp_print_scripts('wp-pointer');
       ?>
       <script src="<?php echo WD_BWG_URL; ?>/filemanager/js/jq_uploader/jquery.iframe-transport.js"></script>
       <script src="<?php echo WD_BWG_URL; ?>/filemanager/js/jq_uploader/jquery.fileupload.js"></script>
+      <link media="all" type="text/css" href="<?php echo get_admin_url(); ?>load-styles.php?c=1&amp;dir=ltr&amp;load=admin-bar,dashicons,wp-admin,buttons,wp-auth-check,wp-pointer" rel="stylesheet">
       <script>
         var DS = "<?php echo addslashes('/'); ?>";
 
@@ -70,7 +72,7 @@ class FilemanagerView {
         var messageFilesUploadComplete = "<?php echo __('Processing uploaded files...', 'bwg_back'); ?>";
 
         var root = "<?php echo addslashes($this->controller->get_uploads_dir()); ?>";
-        var dir = "<?php echo (isset($_REQUEST['dir']) ? addslashes(esc_html($_REQUEST['dir'])) : ''); ?>";
+        var dir = "<?php echo (isset($_REQUEST['dir']) ? trim(esc_html($_REQUEST['dir'])) : ''); ?>";
         var dirUrl = "<?php echo $this->controller->get_uploads_url() . (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) . '/' : ''); ?>";
         var callback = "<?php echo (isset($_REQUEST['callback']) ? esc_html($_REQUEST['callback']) : ''); ?>";
         var sortBy = "<?php echo $sort_by; ?>";
@@ -125,7 +127,7 @@ class FilemanagerView {
                 <a class="ctrl_bar_btn btn_remove_items" onclick="onBtnRemoveItemsClick(event, this);" title="<?php echo __('Remove items', 'bwg_back'); ?>"></a>
                 <span class="ctrl_bar_divider"></span>
                 <span class="ctrl_bar_btn btn_primary">
-                  <a class="ctrl_bar_btn btn_upload_files" onclick="onBtnShowUploaderClick(event, this);"><?php echo __('Upload files', 'bwg_back'); ?></a>
+                  <a id="upload_images" class="ctrl_bar_btn btn_upload_files" onclick="onBtnShowUploaderClick(event, this);"><?php echo __('Upload files', 'bwg_back'); ?></a>
                 </span>
                 <?php if ($bwg_options->enable_ML_import) { ?>
                 <span class="ctrl_bar_divider"></span>
@@ -133,7 +135,7 @@ class FilemanagerView {
                   <a class="ctrl_bar_btn btn_import_files" onclick="onBtnShowImportClick(event, this);"><?php echo __('Media library', 'bwg_back'); ?></a>
                 </span>
                 <?php } ?>
-		<span class="ctrl_bar_divider"></span>
+                <span class="ctrl_bar_divider"></span>
                 <span id="search_by_name" class="ctrl_bar_btn">
                   <input type="search" placeholder="Search" class="ctrl_bar_btn search_by_name">
                 </span>
@@ -148,8 +150,8 @@ class FilemanagerView {
               foreach ($file_manager_data['path_components'] as $key => $path_component) {
                 ?>
                 <a <?php echo ($key == 0) ? 'title="'. __("To change upload directory go to Options page.", 'bwg_back').'"' : ''; ?> class="path_component path_dir"
-                   onclick="onPathComponentClick(event, this, '<?php echo addslashes($path_component['path']); ?>');">
-                    <?php echo $path_component['name']; ?></a>
+                   onclick="onPathComponentClick(event, this, <?php echo $key; ?>);">
+                    <?php echo str_replace('\\', '', $path_component['name']); ?></a>
                 <a class="path_component path_separator"><?php echo '/'; ?></a>
                 <?php
               }
@@ -265,14 +267,14 @@ class FilemanagerView {
             </div>
             <div class="ctrls_bar ctrls_bar_footer">
               <div class="ctrls_left">
-                <a class="ctrl_bar_btn btn_open btn_primary none_select" onclick="onBtnSelectAllClick();"><?php echo __('Select All', 'bwg_back'); ?></a>
+                <a id="select_all_images" class="ctrl_bar_btn btn_open btn_primary none_select" onclick="onBtnSelectAllClick();"><?php echo __('Select All', 'bwg_back'); ?></a>
               </div>
               <div class="ctrls_right">
                 <span id="file_names_span">
                   <span>
                   </span>
                 </span>
-                <a class="ctrl_bar_btn btn_open btn_primary none_select" onclick="onBtnOpenClick(event, this);"><?php echo ((isset($_REQUEST['callback']) && esc_html($_REQUEST['callback']) == 'bwg_add_image') ? __('Add selected images to gallery', 'bwg_back') : __('Add', 'bwg_back')); ?></a>
+                <a id="add_selectid_img" class="ctrl_bar_btn btn_open btn_primary none_select" onclick="onBtnOpenClick(event, this);"><?php echo ((isset($_REQUEST['callback']) && esc_html($_REQUEST['callback']) == 'bwg_add_image') ? __('Add selected images to gallery', 'bwg_back') : __('Add', 'bwg_back')); ?></a>
                 <span class="ctrl_bar_empty_devider"></span>
                 <a class="ctrl_bar_btn btn_cancel btn_secondary none_select" onclick="onBtnCancelClick(event, this);"><?php echo 'Cancel'; ?></a>
               </div>
@@ -386,9 +388,7 @@ class FilemanagerView {
                 <div id="btnBrowseContainer">
                 <?php
                 $query_url = wp_nonce_url( admin_url('admin-ajax.php'), 'bwg_UploadHandler', 'bwg_nonce' );
-                $query_url = add_query_arg(array('action' => 'bwg_UploadHandler', 'dir' => $this->controller->get_uploads_dir() . '/' . (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) : '') . '/'), $query_url);
-                
-
+                $query_url = add_query_arg(array('action' => 'bwg_UploadHandler', 'dir' => (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) : '') . '/'), $query_url);
                 ?>
 
 
@@ -461,7 +461,7 @@ class FilemanagerView {
         <input type="hidden" name="sort_by" value="<?php echo $sort_by; ?>">
         <input type="hidden" name="sort_order" value="<?php echo $sort_order; ?>">
         <input type="hidden" name="items_view" value="<?php echo $items_view; ?>">
-        <input type="hidden" name="dir" value="<?php echo (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) : ''); ?>"/>
+        <input type="hidden" name="dir" value="<?php echo (isset($_REQUEST['dir']) ? str_replace('\\', '', ($_REQUEST['dir'])) : ''); ?>"/>
         <input type="hidden" name="file_names" value=""/>
         <input type="hidden" name="file_namesML" value=""/>
         <input type="hidden" name="file_new_name" value=""/>
@@ -472,6 +472,8 @@ class FilemanagerView {
         <input type="hidden" name="clipboard_dest" value="<?php echo $clipboard_dest; ?>"/>
       </form>
       <?php
+      include_once (WD_BWG_DIR .'/includes/bwg_pointers.php');
+      new BWG_pointers();
       die();
     }
 

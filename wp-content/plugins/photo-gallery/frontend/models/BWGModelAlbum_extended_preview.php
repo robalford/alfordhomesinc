@@ -66,7 +66,7 @@ class BWGModelAlbum_extended_preview {
     global $wpdb;
     $bwg_search = ((isset($_POST['bwg_search_' . $bwg]) && esc_html($_POST['bwg_search_' . $bwg]) != '') ? esc_html($_POST['bwg_search_' . $bwg]) : '');
     if ($bwg_search != '') {
-      $where = 'AND alt LIKE "%%' . $bwg_search . '%%"';
+      $where = 'AND (alt LIKE "%%' . $bwg_search . '%%" OR description LIKE "%%' . $bwg_search . '%%")';
     }
     else {
       $where = '';
@@ -83,7 +83,7 @@ class BWGModelAlbum_extended_preview {
     else {
       $limit_str = '';
     }
-    if ($sort_by == 'random') {
+    if ($sort_by == 'random' || $sort_by == 'RAND()') {
       $sort_by = 'RAND()';
     }
     else {
@@ -103,7 +103,7 @@ class BWGModelAlbum_extended_preview {
     global $wpdb;
     $bwg_search = ((isset($_POST['bwg_search_' . $bwg]) && esc_html($_POST['bwg_search_' . $bwg]) != '') ? esc_html($_POST['bwg_search_' . $bwg]) : '');
     if ($bwg_search != '') {
-      $where = 'AND alt LIKE "%%' . $bwg_search . '%%"';
+      $where = 'AND (alt LIKE "%%' . $bwg_search . '%%" OR description LIKE "%%' . $bwg_search . '%%")';
     }
     else {
       $where = '';

@@ -1,20 +1,30 @@
 <?php
-
 /**
  * WordPress hooks and filters for the plugin.
  *
- * @since 0.7.0
+ * @filesource
  */
 
 namespace cconover\FeaturedImageCaption;
 
+/**
+ * WordPress hooks and filters for the plugin.
+ *
+ * The plugin depends on WordPress action and filter hooks. To make management
+ * of the hooks easier, they are organized inside this class. Each method inside
+ * this class handles the hooks for another class in this plugin.
+ *
+ * @since 0.7.0
+ */
 class Hooks {
     /**
-     * Class constructor.
+     * Call the hooks.
+     *
+     * @api
      *
      * @since 0.7.0
      */
-    public function __construct() {
+    public function call() {
         // Admin
         if ( is_admin() ) {
             // Plugin upgrades
@@ -29,6 +39,11 @@ class Hooks {
 
         // Caption data
         $this->caption();
+
+        // REST API (if supported)
+        if ( class_exists( 'WP_Rest_Controller' ) ) {
+            $this->rest_api();
+        }
 
         // Shortcode
         $this->shortcode();
@@ -80,6 +95,20 @@ class Hooks {
 
         // Initialize plugin options
         add_action('admin_init', array($option, 'options_init'));
+    }
+
+    /**
+     * REST API support
+     *
+     * @internal
+     *
+     * @since 0.8.3
+     */
+    private function rest_api() {
+        $rest_api = new RestApi();
+
+        // Register the fields
+        add_action( 'rest_api_init', array( $rest_api, 'register_fields' ) );
     }
 
     /**

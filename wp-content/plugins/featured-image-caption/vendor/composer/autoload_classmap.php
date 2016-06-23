@@ -68,6 +68,7 @@ return array(
     'cconover\\FeaturedImageCaption\\Hooks' => $baseDir . '/classes/Hooks.php',
     'cconover\\FeaturedImageCaption\\MetaBox' => $baseDir . '/classes/MetaBox.php',
     'cconover\\FeaturedImageCaption\\Option' => $baseDir . '/classes/Option.php',
+    'cconover\\FeaturedImageCaption\\RestApi' => $baseDir . '/classes/RestApi.php',
     'cconover\\FeaturedImageCaption\\Shortcode' => $baseDir . '/classes/Shortcode.php',
     'cconover\\FeaturedImageCaption\\Upgrade' => $baseDir . '/classes/Upgrade.php',
 );

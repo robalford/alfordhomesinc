@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bwg\n"
 "POT-Creation-Date: 2016-01-08 10:32+0400\n"
-"PO-Revision-Date: 2016-02-12 18:05+0400\n"
+"PO-Revision-Date: 2016-02-22 14:08+0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -250,7 +250,7 @@ msgstr "e-mail "
 #: C:\wamp\www\wordpress\wp-content\plugins\photo-gallery\frontend/views/BWGViewGalleryBox.php:1308
 #: C:\wamp\www\wordpress\wp-content\plugins\photo-gallery\frontend/views/BWGViewGalleryBox.php:1315
 msgid "Comment"
-msgstr "Reactie"
+msgstr "Commentaar"
 
 #: C:\wamp\www\wordpress\wp-content\plugins\photo-gallery\frontend/views/BWGViewGalleryBox.php:1298
 msgid "Verification Code"

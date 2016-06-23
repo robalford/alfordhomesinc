@@ -23,8 +23,6 @@ class BWGViewImage_browser {
   // Public Methods                                                                     //
   ////////////////////////////////////////////////////////////////////////////////////////
   public function display($params, $from_shortcode = 0, $bwg = 0) {
-    global $wp;
-    $current_url = $wp->query_string;
     global $WD_BWG_UPLOAD_DIR;
     require_once(WD_BWG_DIR . '/framework/WDWLibrary.php');
     require_once(WD_BWG_DIR . '/framework/WDWLibraryEmbed.php');
@@ -126,7 +124,7 @@ class BWGViewImage_browser {
       'enable_image_pinterest' => $params['popup_enable_pinterest'],
       'enable_image_tumblr' => $params['popup_enable_tumblr'],
       'watermark_type' => $params['watermark_type'],
-      'current_url' => $current_url
+      'slideshow_effect_duration' => isset($params['popup_effect_duration']) ? $params['popup_effect_duration'] : 1
     );
     $items_per_page = array('images_per_page' => 1, 'load_more_image_count' => 1);
     if ($params['watermark_type'] == 'none') {
@@ -509,8 +507,16 @@ class BWGViewImage_browser {
                         if($is_embed_16x9){
                           WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('id'=>"bwg_embed_frame_16x9_".$bwg,'width'=>$params['image_browser_width'], 'height'=>$params['image_browser_width']*0.5625, 'frameborder'=>"0", 'allowfullscreen'=>"allowfullscreen", 'style'=>"position: relative; margin:0;"));          
                         }
-                        elseif($is_embed_instagram_post){
-                          WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('id'=>"bwg_embed_frame_instapost_".$bwg,'width'=>$params['image_browser_width'], 'height'=>$params['image_browser_width']+88, 'frameborder'=>"0", 'allowfullscreen'=>"allowfullscreen", 'style'=>"position: relative; margin:0;"));          
+                        else if($is_embed_instagram_post) {
+                          $instagram_post_width = $params['image_browser_width'];
+                          $instagram_post_height = $params['image_browser_width'];
+                          $image_resolution = explode(' x ', $image_row->resolution);
+                          if (is_array($image_resolution)) {
+                            $instagram_post_width = $image_resolution[0];
+                            $instagram_post_height = explode(' ', $image_resolution[1]);
+                            $instagram_post_height = $instagram_post_height[0];
+                          }
+                          WDWLibraryEmbed::display_embed($image_row->filetype, $image_row->filename, array('class' => "bwg_embed_frame_instapost_" . $bwg, 'data-width' => $instagram_post_width, 'data-height' => $instagram_post_height, 'frameborder' => "0", 'allowfullscreen' => "allowfullscreen", 'style' => "position: relative; margin:0;"));          
                         }
                         else{/*for instagram image, video and flickr enable lightbox onclick*/
                           ?>
@@ -529,7 +535,9 @@ class BWGViewImage_browser {
                         jQuery('#bwg_embed_frame_16x9_<?php echo $bwg; ?>').width(jQuery('#bwg_embed_frame_16x9_<?php echo $bwg; ?>').parent().width());
                         jQuery('#bwg_embed_frame_16x9_<?php echo $bwg; ?>').height(jQuery('#bwg_embed_frame_16x9_<?php echo $bwg; ?>').width() * 0.5625);
                         jQuery('#bwg_embed_frame_instapost_<?php echo $bwg; ?>').width(jQuery('#bwg_embed_frame_16x9_<?php echo $bwg; ?>').parent().width());
-                        jQuery('#bwg_embed_frame_instapost_<?php echo $bwg; ?>').height(jQuery('#bwg_embed_frame_instapost_<?php echo $bwg; ?>').width() +88);
+                        /* 16 is 2*padding inside iframe */
+                        /* 96 is 2*padding(top) + 1*padding(bottom) + 40(footer) + 32(header) */
+                        jQuery('.bwg_embed_frame_instapost_<?php echo $bwg; ?>').height((jQuery('.bwg_embed_frame_instapost_<?php echo $bwg; ?>').width() - 16) * jQuery('.bwg_embed_frame_instapost_<?php echo $bwg; ?>').attr('data-height') / jQuery('.bwg_embed_frame_instapost_<?php echo $bwg; ?>').attr('data-width') + 96);
 
                         var bwg_image_browser_width = jQuery('.image_browser_images_<?php echo $bwg; ?>').width();
                         if (bwg_image_browser_width <= 108) {

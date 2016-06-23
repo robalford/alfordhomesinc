@@ -20,14 +20,12 @@ class FilemanagerModel {
     ////////////////////////////////////////////////////////////////////////////////////////
     private $controller;
 
-
     ////////////////////////////////////////////////////////////////////////////////////////
     // Constructor & Destructor                                                           //
     ////////////////////////////////////////////////////////////////////////////////////////
     public function __construct($controller) {
       $this->controller = $controller;
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // Public Methods                                                                     //
@@ -45,7 +43,7 @@ class FilemanagerModel {
       $data = array();
       $data['session_data'] = $session_data;
       $data['path_components'] = $this->get_path_components();
-      $data['dir'] = (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) : '');
+      $data['dir'] = $this->controller->get_uploads_dir() . (isset($_REQUEST['dir']) ? esc_html($_REQUEST['dir']) : '');
       $data['files'] = $this->get_files($session_data['sort_by'], $session_data['sort_order']);
       $data['media_library_files'] = ($this->controller->get_options_data()->enable_ML_import ? $this->get_media_library_files($session_data['sort_by'], $session_data['sort_order']) : array());
       $data['extensions'] = (isset($_REQUEST['extensions']) ? esc_html($_REQUEST['extensions']) : '');
@@ -53,7 +51,6 @@ class FilemanagerModel {
 
       return $data;
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // Getters & Setters                                                                  //
@@ -106,9 +103,9 @@ class FilemanagerModel {
       $icons_dir_path = WD_BWG_DIR . '/filemanager/images/file_icons';
       $icons_dir_url = WD_BWG_URL . '/filemanager/images/file_icons';
       $valid_types = explode(',', isset($_REQUEST['extensions']) ? strtolower(esc_html($_REQUEST['extensions'])) : '*');
-      $parent_dir = $this->controller->get_uploads_dir() . (isset($_REQUEST['dir']) ? '/' . esc_html($_REQUEST['dir']) : '');
-      $parent_dir_url = $this->controller->get_uploads_url() . (isset($_REQUEST['dir']) ? '/' . esc_html($_REQUEST['dir']) : '');
-
+      $dir = (isset($_REQUEST['dir']) ? '/' . htmlspecialchars_decode(stripslashes(esc_html($_REQUEST['dir'])), ENT_COMPAT | ENT_QUOTES) : '');
+      $parent_dir = $this->controller->get_uploads_dir() . $dir;
+      $parent_dir_url = $this->controller->get_uploads_url() . $dir;
 
       $file_names = $this->get_sorted_file_names($parent_dir, $sort_by, $sort_order);
 
@@ -122,7 +119,7 @@ class FilemanagerModel {
           $file = array();
           $file['is_dir'] = TRUE;
           $file['name'] = $file_name;
-          $file['filename'] = $file_name;
+          $file['filename'] = str_replace("_", " ", $file_name);
           $file['type'] = '';
           $file['thumb'] = $icons_dir_url . '/dir.png';
           $file['icon'] = $icons_dir_url . '/dir.png';
@@ -135,7 +132,8 @@ class FilemanagerModel {
           $file = array();
           $file['is_dir'] = FALSE;
           $file['name'] = $file_name;
-          $file['filename'] = substr($file_name, 0, strrpos($file_name, '.'));
+          $filename = substr($file_name, 0, strrpos($file_name, '.'));
+          $file['filename'] = str_replace("_", " ", $filename);
           $file_extension = explode('.', $file_name);
           $file['type'] = strtolower(end($file_extension));
           $icon = $icons_dir_url . '/' . $file['type'] . '.png';
@@ -169,7 +167,7 @@ class FilemanagerModel {
       $result = $sort_order == 'asc' ? array_merge($dirs, $files) : array_merge($files, $dirs);
       return $result;
     }
-    
+
     function get_media_library_files($sort_by, $sort_order) {
       $icons_dir_path = WD_BWG_DIR . '/filemanager/images/file_icons';
       $icons_dir_url = WD_BWG_URL . '/filemanager/images/file_icons';
@@ -179,9 +177,8 @@ class FilemanagerModel {
       $parent_dir_url = $upload_dir['baseurl'];
 
       $query_images_args = array(
-          'post_type' => 'attachment', 'post_mime_type' =>'image', 'post_status' => 'inherit', 'posts_per_page' => -1,
+        'post_type' => 'attachment', 'post_mime_type' =>'image', 'post_status' => 'inherit', 'posts_per_page' => -1,
       );
-
       $query_images = new WP_Query( $query_images_args );
 
       $files = array();

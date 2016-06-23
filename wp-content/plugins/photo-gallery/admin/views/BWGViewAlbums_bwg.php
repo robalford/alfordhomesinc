@@ -220,6 +220,7 @@ class BWGViewAlbums_bwg {
       }
 
       function bwg_add_items(trackIds, titles, types) {
+        jQuery(document).trigger("onAddAlbum");
         var tbody = document.getElementById('tbody_albums_galleries');
         var counter = 0;
         for(i = 0; i < trackIds.length; i++) {          
@@ -268,7 +269,7 @@ class BWGViewAlbums_bwg {
       <span class="album-icon"></span>
       <h2><?php echo $page_title; ?></h2>
       <div style="float:right;">
-        <input class="button-secondary" type="submit" onclick="if(spider_check_required('name', 'Name')){return false;};spider_set_input_value('task', 'save')" value="<?php _e("Save", 'bwg_back'); ?>" />
+        <input class="button-secondary" id='save_albums' type="submit" onclick="if(spider_check_required('name', 'Name')){return false;};spider_set_input_value('task', 'save')" value="<?php _e("Save", 'bwg_back'); ?>" />
         <input class="button-secondary" type="submit" onclick="if(spider_check_required('name', 'Name')){return false;};spider_set_input_value('task', 'apply')" value="<?php _e("Apply", 'bwg_back'); ?>" />
         <input class="button-secondary" type="submit" onclick="spider_set_input_value('task', 'cancel')" value="<?php _e("Cancel", 'bwg_back'); ?>" />
       </div>
