@@ -33,7 +33,7 @@ add_theme_support( 'genesis-footer-widgets', 3 );
 //* CUSTOM FUNCTIONS FOR ALFORD HOMES WEBSITE BELOW
 
 //* Add custom image size for full width front page
-add_image_size('front-page', 2590, 1200, true);
+add_image_size('front-page', 1440, 776, true);
 
 //* Add fullscreen photo to landing page
 add_action( 'genesis_after_header', 'full_featured_image' );
