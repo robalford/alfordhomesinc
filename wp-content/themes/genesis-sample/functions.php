@@ -69,3 +69,9 @@ function my_footer_creds() {
 //* Remove Edit Link (that displays while logged into admin)
 add_filter( 'edit_post_link', '__return_false' );
 
+//* Display a custom favicon
+add_filter( 'genesis_pre_load_favicon', 'sp_favicon_filter' );
+function sp_favicon_filter( $favicon_url ) {
+    return 'http://198.199.115.64/wp-content/uploads/2016/02/cropped-contact.jpg';
+}
+
